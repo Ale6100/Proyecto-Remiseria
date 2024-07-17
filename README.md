@@ -4,6 +4,12 @@ Bienvenido! En este proyecto presento una aplicación web simple para gestionar 
 
 **Aún no está terminado**, luego dejaré los pasos para instalar y ejecutar la aplicación.
 
+## Deploy 🚀
+
+[https://proyecto-remiseria.vercel.app](https://proyecto-remiseria.vercel.app)
+
+Considera que el servidor gratuito donde alojo el backend se suspende por inactividad, por lo tanto es normal que al principio te responda lento
+
 ## Autor ✒️
 
 | <img src="https://avatars.githubusercontent.com/u/107259761?v=4" width=50>|
