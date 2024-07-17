@@ -7,7 +7,7 @@ dotenv.config(); // Copia todas las igualdades que estén en el archivo ".env" y
 
 // Por seguridad al archivo .env no lo dejo como público, puedes hacerte el tuyo a la altura de la carpeta src
 
-const retornarSiExiste = async (variable) => { // Comprueba la existencia de variables de entorno
+const checkEnv = async (variable) => { // Comprueba la existencia de variables de entorno
     const v = process.env[variable]
 
     if (v !== undefined) {
@@ -21,7 +21,15 @@ const retornarSiExiste = async (variable) => { // Comprueba la existencia de var
 
 export default { // Exporto un objeto que incluye de manera ordenada las variables de entorno recién mencionadas
     site: {
-        urlfrontend: await retornarSiExiste("URL_FRONTEND"), // Sitio donde está ubicado nuestro frontend
-        accessToken: await retornarSiExiste("ACCESS_TOKEN")
+        urlfrontend: await checkEnv("URL_FRONTEND"), // Sitio donde está ubicado nuestro frontend
+        accessToken: await checkEnv("ACCESS_TOKEN")
+    },
+
+    mysql: {
+        host: await checkEnv("MYSQL_HOST"),
+        user: await checkEnv("MYSQL_USER"),
+        port: await checkEnv("MYSQL_PORT"),
+        password: await checkEnv("MYSQL_PASSWORD"),
+        database: await checkEnv("MYSQL_DATABASE")
     }
 }

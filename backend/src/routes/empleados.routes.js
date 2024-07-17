@@ -1,8 +1,18 @@
 import { Router } from "express";
-import empleadosControllers from "../controllers/empleados.controllers.js";
+import { EmpleadoController } from "../controllers/empleados.controllers.js";
 
-const router = Router();
+export const createEmpleadosRouter = ({ EmpleadoModel }) => {
+    const router = Router();
 
-router.get("/", empleadosControllers.getAll);
+    const empleadoController = new EmpleadoController({ EmpleadoModel });
 
-export default router;
+    router.get("/", empleadoController.getAll);
+
+    router.get("/:id", empleadoController.getById);
+
+    router.post("/", empleadoController.create);
+
+    router.delete("/:id", empleadoController.deleteById);
+
+    return router;
+}
