@@ -1,14 +1,14 @@
 "use strict";
-import EmpleadoDto from "../dto/empleado.dto.js";
+import ChoferoDto from "../dto/chofer.dto.js";
 
-export class EmpleadoController {
-    constructor({ EmpleadoModel }) {
-        this.empleadoModel = EmpleadoModel;
+export class ChoferController {
+    constructor({ ChoferModel }) {
+        this.choferModel = ChoferModel;
     }
 
     getAll = async(req, res) => {
         try {
-            const result = await this.empleadoModel.getAll();
+            const result = await this.choferModel.getAll();
             res.status(200).json({ statusCode: 200, payload: result });
         } catch (error) {
             req.logger.error(`${req.infoPeticion} | ${error.message}`)
@@ -20,11 +20,11 @@ export class EmpleadoController {
         try {
             const { id } = req.params;
             if (!id) {
-                req.logger.error(`${req.infoPeticion} | Se requiere un ID de empleado para realizar la búsqueda`)
-                return res.status(400).json({ statusCode: 400, error: 'Se requiere un ID de empleado para realizar la búsqueda' });
+                req.logger.error(`${req.infoPeticion} | Se requiere un ID de chofer para realizar la búsqueda`)
+                return res.status(400).json({ statusCode: 400, error: 'Se requiere un ID de chofer para realizar la búsqueda' });
             }
 
-            const result = await this.empleadoModel.getById(id);
+            const result = await this.choferModel.getById(id);
             res.status(200).json({ statusCode: 200, payload: result });
         } catch (error) {
             req.logger.error(`${req.infoPeticion} | ${error.message}`)
@@ -36,17 +36,17 @@ export class EmpleadoController {
         try {
             const { nombre, apellido, dni, tipoLicencia, fechaVencimiento } = req.body;
 
-            const badRequestError = EmpleadoDto.badRequestCreate({ nombre, apellido, dni, tipoLicencia, fechaVencimiento });
+            const badRequestError = ChoferoDto.badRequestCreate({ nombre, apellido, dni, tipoLicencia, fechaVencimiento });
             if (badRequestError) {
                 req.logger.error(`${req.infoPeticion} | ${badRequestError}`)
                 return res.status(400).json({ statusCode: 400, error: badRequestError });
             }
 
-            const empleadoDTO = EmpleadoDto.create(req.body);
+            const choferDTO = ChoferoDto.create(req.body);
 
-            await this.empleadoModel.create(empleadoDTO);
+            await this.choferModel.create(choferDTO);
 
-            res.status(200).json({ statusCode: 200, message: 'Empleado creado correctamente' });
+            res.status(200).json({ statusCode: 200, message: 'Chofer creado correctamente' });
         } catch (error) {
             req.logger.error(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });
@@ -57,12 +57,12 @@ export class EmpleadoController {
         try {
             const { id } = req.params;
             if (!id) {
-                req.logger.error(`${req.infoPeticion} | Se requiere un ID de empleado para realizar la eliminación`)
-                return res.status(400).json({ statusCode: 400, error: 'Se requiere un ID de empleado para realizar la eliminación' });
+                req.logger.error(`${req.infoPeticion} | Se requiere un ID de chofer para realizar la eliminación`)
+                return res.status(400).json({ statusCode: 400, error: 'Se requiere un ID de chofer para realizar la eliminación' });
             }
 
-            await this.empleadoModel.deleteById(id);
-            res.status(200).json({ statusCode: 200, message: 'Empleado eliminado correctamente' });
+            await this.choferModel.deleteById(id);
+            res.status(200).json({ statusCode: 200, message: 'Chofer eliminado correctamente' });
         } catch (error) {
             req.logger.error(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });

@@ -1,6 +1,6 @@
 # Proyecto Remisería
 
-Bienvenido! En este proyecto presento una aplicación web simple para gestionar choferes, autos y viajes de una remisería, utilizando frontend en NextJS y backend en ExpressJS por separado.
+Bienvenido! En este proyecto presento una aplicación web simple para gestionar choferes, autos y viajes de una remisería utilizando frontend en NextJS y backend en ExpressJS por separado.
 
 **El proyecto y este readme aún no están terminados**
 

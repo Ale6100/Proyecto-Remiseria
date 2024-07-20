@@ -1,4 +1,4 @@
-export default class EmpleadoDto {
+export default class ChoferDto {
     static tipoLicenciaDTO = {
         "1": 'profesionales',
         "2": 'particulares'
@@ -30,7 +30,7 @@ export default class EmpleadoDto {
     }
 
     static badRequestCreate({ nombre, apellido, dni, tipoLicencia, fechaVencimiento }) {
-        if (!nombre || !apellido || !dni || !tipoLicencia ) {
+        if ([nombre, apellido, dni, tipoLicencia].some(value => value === undefined) ) {
             return 'Los siguientes campos son requeridos: nombre, apellido, dni y tipoLicencia';
         }
 

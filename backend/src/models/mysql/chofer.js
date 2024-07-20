@@ -13,31 +13,31 @@ const config = {
 
 const connection = await mysql.createConnection(config);
 
-export class EmpleadoModel {
+export class ChoferModel {
     static async getAll() {
-        const [ result ] = await connection.query('SELECT * FROM empleados');
+        const [ result ] = await connection.query('SELECT * FROM choferes');
         return result
     }
 
     static async getById(id) {
-        const [ result ] = await connection.query('SELECT * FROM empleados WHERE id = ?', [id]);
+        const [ result ] = await connection.query('SELECT * FROM choferes WHERE id = ?', [id]);
         return result
     }
 
-    static async create(empleado) {
+    static async create(chofer) {
         const [ resultInsert ] = await connection.query(`
             INSERT INTO licencias (tipo, fechaVencimiento)
-            VALUES (?, ?)`, [empleado.tipoLicencia, empleado.fechaVencimiento]);
+            VALUES (?, ?)`, [chofer.tipoLicencia, chofer.fechaVencimiento]);
 
         await connection.query(`
-            INSERT INTO empleados (nombre, apellido, dni, idLicencia)
-            VALUES (?, ?, ?, ?)`, [empleado.nombre, empleado.apellido, empleado.dni, resultInsert.insertId]);
+            INSERT INTO choferes (nombre, apellido, dni, idLicencia)
+            VALUES (?, ?, ?, ?)`, [chofer.nombre, chofer.apellido, chofer.dni, resultInsert.insertId]);
     }
 
     static async deleteById(id) {
-        const [ resultSelect ] = await connection.query('SELECT * FROM empleados WHERE id = ?', [id]);
+        const [ resultSelect ] = await connection.query('SELECT * FROM choferes WHERE id = ?', [id]);
 
-        await connection.query('DELETE FROM empleados WHERE id = ?', [id]);
+        await connection.query('DELETE FROM choferes WHERE id = ?', [id]);
 
         if (resultSelect[0]) { // También se elimina su licencia
             await connection.query('DELETE FROM licencias WHERE id = ?', [resultSelect[0].idLicencia]);
