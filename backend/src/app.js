@@ -12,6 +12,7 @@ import cors from "cors";
 import { ChoferModel } from "./models/mysql/chofer.js";
 import { VehiculoModel } from "./models/mysql/vehiculos.js";
 import { MarcaModel } from "./models/mysql/marcas.js";
+import connectMySQL from "./config/connectMySQL.js";
 
 const app = express();
 
@@ -35,6 +36,6 @@ app.use(cors({ origin: config.site.urlfrontend ? [config.site.urlfrontend] : [] 
 app.use(addLogger)
 
 app.use("/", baseRouter)
-app.use("/choferes", createChoferesRouter({ ChoferModel }))
-app.use("/vehiculos", createVehiculosRouter({ VehiculoModel }))
-app.use("/marcas", createMarcasRouter({ MarcaModel }))
+app.use("/choferes", createChoferesRouter({ ChoferModel: new ChoferModel(connectMySQL) }))
+app.use("/vehiculos", createVehiculosRouter({ VehiculoModel: new VehiculoModel(connectMySQL) }))
+app.use("/marcas", createMarcasRouter({ MarcaModel: new MarcaModel(connectMySQL) }))

@@ -1,29 +1,18 @@
-import mysql from 'mysql2/promise';
-import configEnv from '../../config/config.js';
-
-const { host, user, port, password, database } = configEnv.mysql;
-
-const config = {
-    host,
-    user,
-    port,
-    password,
-    database
-}
-
-const connection = await mysql.createConnection(config);
-
 export class MarcaModel {
-    static async getAll() {
-        const [ result ] = await connection.query('SELECT * FROM marcas');
+    constructor(connection) {
+        this.connection = connection;
+    }
+
+    async getAll() {
+        const [ result ] = await this.connection.query('SELECT * FROM marcas');
         return result;
     }
 
-    static async create(marca) {
-        await connection.query('INSERT INTO marcas (nombre) VALUES (?)', [marca.nombre]);
+    async create(marca) {
+        await this.connection.query('INSERT INTO marcas (nombre) VALUES (?)', [marca.nombre]);
     }
 
-    static async deleteById(id) {
-        await connection.query('DELETE FROM marcas WHERE id = ?', [id]);
+    async deleteById(id) {
+        await this.connection.query('DELETE FROM marcas WHERE id = ?', [id]);
     }
 }
