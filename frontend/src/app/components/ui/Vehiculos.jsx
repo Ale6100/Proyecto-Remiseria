@@ -82,10 +82,14 @@ const Vehiculos = () => {
                 const marcas = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/marcas`).then((res) => res.json());
                 console.log('Vehiculos:', data);
                 console.log('Marcas:', marcas);
-                setVehiculos(data);
-                setTotalPagesState(totalPages);
-                setMarcas(marcas.payload);
-                toast("Event has been created.")
+                if (data.length === 0 && pageIndex > 1) {
+                    setPageIndex(1);
+                    toast(`La página ${pageIndex} ya no existe. Lo redirigimos a la página 1`);
+                } else {
+                    setVehiculos(data);
+                    setTotalPagesState(totalPages);
+                    setMarcas(marcas.payload);
+                }
             } catch (error) {
                 console.log('Error:', error);
             }
@@ -120,6 +124,7 @@ const Vehiculos = () => {
 
             setTotalPagesState(totalPages);
 
+            setVehiculos([...vehiculos, { ...values, kmTotales: 0, id: newId }]);
             console.log('nuevos autos', [...vehiculos, { ...values, kmTotales: 0, id: newId }]);
 
             form.reset();
@@ -161,7 +166,7 @@ const Vehiculos = () => {
 
             console.log('Total pages:', payload);
 
-            setTotalPagesState(payload);
+            // setTotalPagesState(payload);
 
             const nuevoVehiculos = vehiculos.filter(v => v.id !== idVehicle);
 

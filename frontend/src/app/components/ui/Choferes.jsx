@@ -1,5 +1,7 @@
 // import { useState, useEffect } from "react";
 
+// const limit = 10;
+
 const Choferes = () => {
 //   const [ choferes, setChoferes ] = useState([]);
 //     const [ pageIndex, setPageIndex ] = useState(1);
@@ -10,13 +12,11 @@ const Choferes = () => {
 //         try {
 //             const { payload } = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes?page=${pageIndex}&limit=${limit}`).then((res) => res.json());
 //             const { data, totalPages } = payload;
-//             const marcas = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/marcas`).then((res) => res.json());
-//             console.log('Vehiculos:', data);
-//             console.log('Marcas:', marcas);
-//             setVehiculos(data);
+//             console.log('Choferes:', data);
+
+//             setChoferes(data);
 //             setTotalPagesState(totalPages);
-//             setMarcas(marcas.payload);
-//             toast("Event has been created.")
+//             toast("Choferes")
 //         } catch (error) {
 //             console.log('Error:', error);
 //         }
