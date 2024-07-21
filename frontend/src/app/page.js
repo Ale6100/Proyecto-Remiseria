@@ -1,4 +1,5 @@
 import Gestion from "./components/ui/Gestion";
+import { Toaster } from "@/app/components/ui/Shadcn/sonner"
 
 export default async function Home() {
   return (
@@ -7,6 +8,7 @@ export default async function Home() {
       <h1 className='text-center text-3xl'>Remisería Buen Viaje</h1>
 
       <Gestion />
+      <Toaster />
     </main>
   );
 }

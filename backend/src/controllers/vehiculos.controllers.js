@@ -7,7 +7,9 @@ export class VehiculoController {
 
     getAll = async(req, res) => {
         try {
-            const { page, limit } = req.query;
+            let { page, limit } = req.query;
+            page = parseInt(page);
+            limit = parseInt(limit);
 
             const badRequestError = VehiculoDto.badRequestGetAll({ page, limit });
             if (badRequestError) {
@@ -26,8 +28,10 @@ export class VehiculoController {
     create = async(req, res) => {
         try {
             const { dominio, modelo, kmParciales, marca } = req.body;
+            let { limit } = req.query;
+            limit = parseInt(limit);
 
-            const badRequestError = VehiculoDto.badRequestCreate({ dominio, modelo, kmParciales, marca });
+            const badRequestError = VehiculoDto.badRequestCreate({ dominio, modelo, kmParciales, marca, limit });
             if (badRequestError) {
                 req.logger.error(`${req.infoPeticion} | ${badRequestError}`)
                 return res.status(400).json({ statusCode: 400, error: badRequestError });
@@ -35,9 +39,9 @@ export class VehiculoController {
 
             const vehiculoDTO = VehiculoDto.create(req.body);
 
-            const id = await this.vehiculoModel.create(vehiculoDTO);
+            const result = await this.vehiculoModel.create(vehiculoDTO);
 
-            res.status(200).json({ statusCode: 200, message: 'Vehículo creado correctamente', payload: id });
+            res.status(200).json({ statusCode: 200, message: 'Vehículo creado correctamente', payload: result });
         } catch (error) {
             req.logger.error(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });
@@ -47,14 +51,36 @@ export class VehiculoController {
     deleteById = async(req, res) => {
         try {
             const { id } = req.params;
-            if (!id) {
-                req.logger.error(`${req.infoPeticion} | Se requiere un ID de vehículo para realizar la eliminación`)
-                return res.status(400).json({ statusCode: 400, error: 'Se requiere un ID de vehículo para realizar la eliminación' });
+            let { limit } = req.query;
+            limit = parseInt(limit);
+
+            const badRequestError = VehiculoDto.badRequestDelete({ id, limit });
+
+            if (badRequestError) {
+                req.logger.error(`${req.infoPeticion} | ${badRequestError}`)
+                return res.status(400).json({ statusCode: 400, error: badRequestError });
             }
 
-            await this.vehiculoModel.deleteById(id);
+            const totalPages = await this.vehiculoModel.deleteById(id);
 
-            res.status(200).json({ statusCode: 200, message: 'Vehículo eliminado correctamente' });
+            res.status(200).json({ statusCode: 200, message: 'Vehículo eliminado correctamente', payload: totalPages } )
+        } catch (error) {
+            req.logger.error(`${req.infoPeticion} | ${error.message}`)
+            res.status(500).json({ statusCode: 500, error: error.message });
+        }
+    }
+
+    resetKm = async(req, res) => {
+        try {
+            const { id } = req.params;
+            if (!id) {
+                req.logger.error(`${req.infoPeticion} | Se requiere un ID de vehículo para realizar el reseteo del kilometraje`)
+                return res.status(400).json({ statusCode: 400, error: 'Se requiere un ID de vehículo para realizar el reseteo del kilometraje`)' });
+            }
+
+            await this.vehiculoModel.resetKm(id);
+
+            res.status(200).json({ statusCode: 200, message: 'Kilometraje reseteados correctamente' });
         } catch (error) {
             req.logger.error(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });

@@ -1,35 +1,26 @@
 "use client"
-import { useState } from "react";
 import Choferes from "@/app/components/ui/Choferes";
 import Vehiculos from "./Vehiculos";
 import Viajes from "./Viajes";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/Shadcn/tabs"
 
 export default function Gestion () {
-  const [ btnChosen, setBtnChosen ] = useState('vehiculos');
-
   return (
     <section className="px-4 border-2 border-green-700">
-      <div className="flex justify-between items-center">
-        <p>Gestione aquí sus choferes, autos y viajes</p>
+      <p>Gestione aquí sus choferes, autos y viajes</p>
 
-        <nav>
-          <ul className="flex gap-4">
-            <li>
-              <button onClick={() => setBtnChosen('vehiculos')} className={`h-10 w-32 bg-blue-800 text-white rounded md:hover:bg-blue-600 md:active:bg-blue-950 max-md:active:bg-blue-600 ${btnChosen === 'vehiculos' && 'border-4 border-black'}`}>Vehiculos</button>
-            </li>
-            <li>
-              <button onClick={() => setBtnChosen('choferes')} className={`h-10 w-32 bg-blue-800 text-white rounded md:hover:bg-blue-600 md:active:bg-blue-950 max-md:active:bg-blue-600 ${btnChosen === 'choferes' && 'border-4 border-black'}`}>Choferes</button>
-            </li>
-            <li>
-              <button onClick={() => setBtnChosen('viajes')} className={`h-10 w-32 bg-blue-800 text-white rounded md:hover:bg-blue-600 md:active:bg-blue-950 max-md:active:bg-blue-600 ${btnChosen === 'viajes' && 'border-4 border-black'}`}>Viajes</button>
-            </li>
-          </ul>
-        </nav>
-      </div>
-
-      {btnChosen === 'vehiculos' && <Vehiculos />}
-      {btnChosen === 'choferes' && <Choferes />}
-      {btnChosen === 'viajes' && <Viajes />}
+      <Tabs defaultValue="vehiculos">
+        <TabsList className='w-full bg-transparent'>
+          <div className='mx-auto border-2 border-black rounded bg-gray-950 text-white'>
+            <TabsTrigger value="vehiculos">Vehículos</TabsTrigger>
+            <TabsTrigger className='mx-5' value="choferes">Choferes</TabsTrigger>
+            <TabsTrigger value="viajes">Viajes</TabsTrigger>
+          </div>
+        </TabsList>
+        <TabsContent value="vehiculos"><Vehiculos /></TabsContent>
+        <TabsContent value="choferes"><Choferes /></TabsContent>
+        <TabsContent value="viajes"><Viajes /></TabsContent>
+      </Tabs>
     </section>
   );
 }

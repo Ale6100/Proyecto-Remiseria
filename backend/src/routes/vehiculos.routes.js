@@ -12,5 +12,7 @@ export const createVehiculosRouter = ({ VehiculoModel }) => {
 
     router.delete("/:id", vehiculoController.deleteById);
 
+    router.put("/resetKm/:id", vehiculoController.resetKm);
+
     return router;
 }

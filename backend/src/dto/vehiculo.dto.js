@@ -21,7 +21,7 @@ export default class VehiculoDto {
         return '';
     }
 
-    static badRequestCreate({ dominio, modelo, kmParciales, marca }) {
+    static badRequestCreate({ dominio, modelo, kmParciales, marca, limit }) {
         if ([dominio, modelo, kmParciales, marca].some(value => value === undefined)) {
             return 'Los siguientes campos son requeridos: dominio, modelo, kmParciales y marca';
         }
@@ -36,6 +36,22 @@ export default class VehiculoDto {
 
         if (typeof kmParciales !== 'number' || kmParciales < 0) {
             return 'kmParciales deben ser un número mayor o igual a cero';
+        }
+
+        if (limit !== undefined && !(typeof limit === 'number' && Number.isInteger(limit) && limit > 0)) {
+            return 'El parámetro "page" debe ser un número natural';
+        }
+
+        return '';
+    }
+
+    static badRequestDelete({ id, limit }) {
+        if (id === undefined) {
+            return 'Se requiere un ID de vehículo para realizar la eliminación';
+        }
+
+        if (limit !== undefined && !(typeof limit === 'number' && Number.isInteger(limit) && limit > 0)) {
+            return 'El parámetro "page" debe ser un número natural';
         }
 
         return '';

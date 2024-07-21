@@ -63,7 +63,7 @@ Corre el proyecto con el comando
 npm run dev
 ```
 
-Una vez que veas los mensajes "Servidor escuchando en el puerto 8080" (puerto configurado por defecto), podrás comenzar a utilizarlo sin problemas.
+Una vez que veas el mensaje "Servidor escuchando en el puerto 8080" (puerto configurado por defecto), podrás comenzar a utilizarlo sin problemas.
 
 ## Autor ✒️
 
