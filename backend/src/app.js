@@ -5,11 +5,13 @@ import addLogger from "./middlewares/addLogger.js";
 import baseRouter from "./routes/base.routes.js"
 import { createChoferesRouter } from "./routes/choferes.routes.js"
 import { createVehiculosRouter } from "./routes/vehiculos.routes.js"
+import { createMarcasRouter } from "./routes/marcas.routes.js"
 import config from "./config/config.js";
 import { waitFor } from "./utils.js";
 import cors from "cors";
 import { ChoferModel } from "./models/mysql/chofer.js";
 import { VehiculoModel } from "./models/mysql/vehiculos.js";
+import { MarcaModel } from "./models/mysql/marcas.js";
 
 const app = express();
 
@@ -35,3 +37,4 @@ app.use(addLogger)
 app.use("/", baseRouter)
 app.use("/choferes", createChoferesRouter({ ChoferModel }))
 app.use("/vehiculos", createVehiculosRouter({ VehiculoModel }))
+app.use("/marcas", createMarcasRouter({ MarcaModel }))

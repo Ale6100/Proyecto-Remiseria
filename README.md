@@ -18,18 +18,12 @@ Párate en la carpeta [frontend](./frontend) y ejecuta el siguiente comando para
 npm install
 ```
 
-Es necesario crear variables de entorno mediante la elaboración de un archivo .env al mismo nivel que la carpeta src. Este archivo debe completarse con los siguientes campos, los cuales deben modificarse con tus propias credenciales en lugar del valor "X".
+Es necesario crear variables de entorno mediante la elaboración de un archivo `.env.local` al mismo nivel que la carpeta src. Este archivo debe completarse con los siguientes campos, los cuales deben modificarse con tus propias credenciales en lugar del valor "X".
 
 ```env
-PENDIENTE = X # URL de tu backend sin barra lateral final
+NEXT_PUBLIC_URL_BACKEND = X # URL de tu backend sin barra lateral final
 
-PENDIENTE = X # Cadena de caracteres utilizado como mecanismo de autenticación para asegurar que solamente los usuarios que presenten este token en los encabezados de sus solicitudes puedan acceder al backend. Importante: Su valor tiene que ser el mismo que el de la variable de entorno TOKEN_GRAL que ponés en el backend
-```
-
-**Nota**: Puedes acceder a las variables desde el objeto `PENDIENTE`, por ejemplo:
-
-```js
-const backendUrl = "PENDIENTE"
+NEXT_PUBLIC_ACCESS_TOKEN = X # Cadena de caracteres utilizado como mecanismo de autenticación para asegurar que solamente los usuarios que presenten este token en los encabezados de sus solicitudes puedan acceder al backend. Importante: Su valor tiene que ser el mismo que el de la variable de entorno ACCESS_TOKEN que ponés en el backend
 ```
 
 Corre el proyecto con el comando
@@ -48,12 +42,12 @@ Párate en la carpeta [backend](./backend) y ejecuta el siguiente comando para i
 npm install
 ```
 
-Al igual que el frontend, se necesitan variables de entorno. Estas son:
+Al igual que el frontend, se necesitan variables de entorno, pero esta vez se deben colocar en un archivo `.env`. Estas son:
 
 ```env
 URL_FRONTEND = X # URL de tu frontend sin barra lateral final
 
-ACCESS_TOKEN = X # Cadena de caracteres utilizado como mecanismo de autenticación para asegurar que solamente los usuarios que presenten este token en los encabezados de sus solicitudes puedan acceder al backend. Importante: Su valor tiene que ser el mismo que el de la variable de entorno PENDIENTE que ponés en el frontend
+ACCESS_TOKEN = X # Cadena de caracteres utilizado como mecanismo de autenticación para asegurar que solamente los usuarios que presenten este token en los encabezados de sus solicitudes puedan acceder al backend. Importante: Su valor tiene que ser el mismo que el de la variable de entorno ACCESS_TOKEN que ponés en el frontend
 
 # Credenciales de mysql
 MYSQL_HOST = X

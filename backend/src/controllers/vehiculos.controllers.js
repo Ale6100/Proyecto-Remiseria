@@ -25,9 +25,9 @@ export class VehiculoController {
 
     create = async(req, res) => {
         try {
-            const { dominio, modelo, kmParciales, kmTotales, marca } = req.body;
+            const { dominio, modelo, kmParciales, marca } = req.body;
 
-            const badRequestError = VehiculoDto.badRequestCreate({ dominio, modelo, kmParciales, kmTotales, marca });
+            const badRequestError = VehiculoDto.badRequestCreate({ dominio, modelo, kmParciales, marca });
             if (badRequestError) {
                 req.logger.error(`${req.infoPeticion} | ${badRequestError}`)
                 return res.status(400).json({ statusCode: 400, error: badRequestError });
@@ -35,9 +35,9 @@ export class VehiculoController {
 
             const vehiculoDTO = VehiculoDto.create(req.body);
 
-            await this.vehiculoModel.create(vehiculoDTO);
+            const id = await this.vehiculoModel.create(vehiculoDTO);
 
-            res.status(200).json({ statusCode: 200, message: 'Vehículo creado correctamente' });
+            res.status(200).json({ statusCode: 200, message: 'Vehículo creado correctamente', payload: id });
         } catch (error) {
             req.logger.error(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });

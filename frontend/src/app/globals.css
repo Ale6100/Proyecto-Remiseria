@@ -2,6 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
 /* Fondo de pantalla obtenido de https://www.mshr.app/ */
-/* @keyframes hero-gradient-animation{0%{--x-0:11%; --s-start-0:37%; --s-end-0:90%; --y-0:96%; --c-0:hsla(181,79%,51%,1); --s-start-1:31%; --s-end-1:84%; --x-1:92%; --y-1:89%; --c-1:hsla(258,100%,64%,1); --x-2:58%; --c-2:hsla(202,95%,54%,1); --y-2:7%; --s-start-2:41%; --s-end-2:61%; --y-3:35%; --c-3:hsla(225,76%,52%,1); --x-3:62%; --s-start-3:22%; --s-end-3:59%; --x-4:2%; --y-4:63%; --c-4:hsla(218,81%,92%,1); --s-start-4:19%; --s-end-4:70%;}100%{--x-0:6%; --s-start-0:29%; --s-end-0:73%; --y-0:12%; --c-0:hsla(299,78%,76%,1); --s-start-1:8%; --s-end-1:80%; --x-1:61%; --y-1:6%; --c-1:hsla(221,87%,56%,1); --x-2:75%; --c-2:hsla(206,51%,96%,1); --y-2:23%; --s-start-2:29%; --s-end-2:80%; --y-3:64%; --c-3:hsla(204,76%,75%,1); --x-3:76%; --s-start-3:2%; --s-end-3:81%; --x-4:41%; --y-4:86%; --c-4:hsla(301,89%,98%,1); --s-start-4:24%; --s-end-4:81%;}}@property --x-0{syntax:'<percentage>';inherits:false;initial-value:11%}@property --s-start-0{syntax:'<percentage>';inherits:false;initial-value:37%}@property --s-end-0{syntax:'<percentage>';inherits:false;initial-value:90%}@property --y-0{syntax:'<percentage>';inherits:false;initial-value:96%}@property --c-0{syntax:'<color>';inherits:false;initial-value:hsla(181,79%,51%,1)}@property --s-start-1{syntax:'<percentage>';inherits:false;initial-value:31%}@property --s-end-1{syntax:'<percentage>';inherits:false;initial-value:84%}@property --x-1{syntax:'<percentage>';inherits:false;initial-value:92%}@property --y-1{syntax:'<percentage>';inherits:false;initial-value:89%}@property --c-1{syntax:'<color>';inherits:false;initial-value:hsla(258,100%,64%,1)}@property --x-2{syntax:'<percentage>';inherits:false;initial-value:58%}@property --c-2{syntax:'<color>';inherits:false;initial-value:hsla(202,95%,54%,1)}@property --y-2{syntax:'<percentage>';inherits:false;initial-value:7%}@property --s-start-2{syntax:'<percentage>';inherits:false;initial-value:41%}@property --s-end-2{syntax:'<percentage>';inherits:false;initial-value:61%}@property --y-3{syntax:'<percentage>';inherits:false;initial-value:35%}@property --c-3{syntax:'<color>';inherits:false;initial-value:hsla(225,76%,52%,1)}@property --x-3{syntax:'<percentage>';inherits:false;initial-value:62%}@property --s-start-3{syntax:'<percentage>';inherits:false;initial-value:22%}@property --s-end-3{syntax:'<percentage>';inherits:false;initial-value:59%}@property --x-4{syntax:'<percentage>';inherits:false;initial-value:2%}@property --y-4{syntax:'<percentage>';inherits:false;initial-value:63%}@property --c-4{syntax:'<color>';inherits:false;initial-value:hsla(218,81%,92%,1)}@property --s-start-4{syntax:'<percentage>';inherits:false;initial-value:19%}@property --s-end-4{syntax:'<percentage>';inherits:false;initial-value:70%} body{--x-0:11%;--y-0:96%;--c-0:hsla(181,79%,51%,1);--x-1:92%;--y-1:89%;--c-1:hsla(258,100%,64%,1);--x-2:58%;--c-2:hsla(202,95%,54%,1);--y-2:7%;--y-3:35%;--c-3:hsla(225,76%,52%,1);--x-3:62%;--x-4:2%;--y-4:63%;--c-4:hsla(218,81%,92%,1);;background-color:hsla(258,82%,70%,1);background-image:radial-gradient(circle at var(--x-0) var(--y-0), var(--c-0) var(--s-start-0),transparent var(--s-end-0)),radial-gradient(circle at var(--x-1) var(--y-1), var(--c-1) var(--s-start-1),transparent var(--s-end-1)),radial-gradient(circle at var(--x-2) var(--y-2), var(--c-2) var(--s-start-2),transparent var(--s-end-2)),radial-gradient(circle at var(--x-3) var(--y-3), var(--c-3) var(--s-start-3),transparent var(--s-end-3)),radial-gradient(circle at var(--x-4) var(--y-4), var(--c-4) var(--s-start-4),transparent var(--s-end-4));animation:hero-gradient-animation 10s linear infinite alternate;background-blend-mode:normal,normal,normal,normal,normal;} */
 @keyframes hero-gradient-animation{0%{--x-0:85%; --c-0:hsla(150.8823529411765,52%,83%,1); --s-start-0:9%; --s-end-0:55%; --y-0:80%; --x-1:60%; --y-1:24%; --c-1:hsla(219.99999999999997,100%,82%,1); --s-start-1:5%; --s-end-1:72%; --y-2:82%; --s-start-2:5%; --s-end-2:52%; --c-2:hsla(297.7941176470588,100%,65%,0.49); --x-2:13%; --x-3:24%; --s-start-3:13%; --s-end-3:68%; --y-3:7%; --c-3:hsla(182,72%,68%,1);}100%{--x-0:31%; --c-0:hsla(150.8823529411765,52%,83%,1); --s-start-0:9%; --s-end-0:55%; --y-0:94%; --x-1:2%; --y-1:25%; --c-1:hsla(220,82%,95%,1); --s-start-1:5%; --s-end-1:72%; --y-2:20%; --s-start-2:5%; --s-end-2:52%; --c-2:hsla(297.7941176470588,100%,65%,0.49); --x-2:98%; --x-3:95%; --s-start-3:13%; --s-end-3:68%; --y-3:92%; --c-3:hsla(182,72%,68%,1);}}@property --x-0{syntax:'<percentage>';inherits:false;initial-value:85%}@property --c-0{syntax:'<color>';inherits:false;initial-value:hsla(150.8823529411765,52%,83%,1)}@property --s-start-0{syntax:'<percentage>';inherits:false;initial-value:9%}@property --s-end-0{syntax:'<percentage>';inherits:false;initial-value:55%}@property --y-0{syntax:'<percentage>';inherits:false;initial-value:80%}@property --x-1{syntax:'<percentage>';inherits:false;initial-value:60%}@property --y-1{syntax:'<percentage>';inherits:false;initial-value:24%}@property --c-1{syntax:'<color>';inherits:false;initial-value:hsla(219.99999999999997,100%,82%,1)}@property --s-start-1{syntax:'<percentage>';inherits:false;initial-value:5%}@property --s-end-1{syntax:'<percentage>';inherits:false;initial-value:72%}@property --y-2{syntax:'<percentage>';inherits:false;initial-value:82%}@property --s-start-2{syntax:'<percentage>';inherits:false;initial-value:5%}@property --s-end-2{syntax:'<percentage>';inherits:false;initial-value:52%}@property --c-2{syntax:'<color>';inherits:false;initial-value:hsla(297.7941176470588,100%,65%,0.49)}@property --x-2{syntax:'<percentage>';inherits:false;initial-value:13%}@property --x-3{syntax:'<percentage>';inherits:false;initial-value:24%}@property --s-start-3{syntax:'<percentage>';inherits:false;initial-value:13%}@property --s-end-3{syntax:'<percentage>';inherits:false;initial-value:68%}@property --y-3{syntax:'<percentage>';inherits:false;initial-value:7%}@property --c-3{syntax:'<color>';inherits:false;initial-value:hsla(182,72%,68%,1)} body{--x-0:85%;--c-0:hsla(150.8823529411765,52%,83%,1);--y-0:80%;--x-1:60%;--y-1:24%;--c-1:hsla(219.99999999999997,100%,82%,1);--y-2:82%;--c-2:hsla(297.7941176470588,100%,65%,0.49);--x-2:13%;--x-3:24%;--y-3:7%;--c-3:hsla(182,72%,68%,1);;background-color:hsla(358.0000000000001,0%,100%,1);background-image:radial-gradient(circle at var(--x-0) var(--y-0), var(--c-0) var(--s-start-0),transparent var(--s-end-0)),radial-gradient(circle at var(--x-1) var(--y-1), var(--c-1) var(--s-start-1),transparent var(--s-end-1)),radial-gradient(circle at var(--x-2) var(--y-2), var(--c-2) var(--s-start-2),transparent var(--s-end-2)),radial-gradient(circle at var(--x-3) var(--y-3), var(--c-3) var(--s-start-3),transparent var(--s-end-3));animation:hero-gradient-animation 10s linear infinite alternate;background-blend-mode:normal,normal,normal,normal;}

@@ -1,4 +1,4 @@
-import Gestion from "./components/Gestion";
+import Gestion from "./components/ui/Gestion";
 
 export default async function Home() {
   return (

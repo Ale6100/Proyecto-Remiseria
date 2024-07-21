@@ -1,8 +1,8 @@
 "use client"
 import { useState } from "react";
-import Choferes from "@/ui/Choferes";
-import Vehiculos from "../../ui/Vehiculos";
-import Viajes from "../../ui/Viajes";
+import Choferes from "@/app/components/ui/Choferes";
+import Vehiculos from "./Vehiculos";
+import Viajes from "./Viajes";
 
 export default function Gestion () {
   const [ btnChosen, setBtnChosen ] = useState('vehiculos');
@@ -27,11 +27,9 @@ export default function Gestion () {
         </nav>
       </div>
 
-      <section className={`grid ${btnChosen === 'vehiculos' ? 'grid-cols-7' : ''}`}>
-        {btnChosen === 'vehiculos' && <Vehiculos />}
-        {btnChosen === 'choferes' && <Choferes />}
-        {btnChosen === 'viajes' && <Viajes />}
-      </section>
+      {btnChosen === 'vehiculos' && <Vehiculos />}
+      {btnChosen === 'choferes' && <Choferes />}
+      {btnChosen === 'viajes' && <Viajes />}
     </section>
   );
 }
