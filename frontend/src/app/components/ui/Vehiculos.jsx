@@ -1,6 +1,6 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, set, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/app/components/ui/Shadcn/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/Shadcn/form";
@@ -10,9 +10,8 @@ import Image from 'next/image';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/app/components/ui/Shadcn/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/app/components/ui/Shadcn/dialog";
 import { toast } from "sonner";
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable, getSortedRowModel } from "@tanstack/react-table"
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/Shadcn/table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 const limit = 10;
 
@@ -311,37 +310,37 @@ const Vehiculos = () => {
     }
     <button className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ pageIndex }</button>
     {
-    pageIndex !== totalPagesState && <button onClick={ () => setPageIndex(totalPagesState) } className="lex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ totalPagesState }</button>
+    pageIndex !== totalPagesState && totalPagesState !== 0 && <button onClick={ () => setPageIndex(totalPagesState) } className="lex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ totalPagesState }</button>
     }
-    <button onClick={ () => setPageIndex(index => index+1) } disabled={pageIndex === totalPagesState} className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</button>
+    <button onClick={ () => setPageIndex(index => index+1) } disabled={pageIndex === totalPagesState || totalPagesState == 0} className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</button>
     </div>
 
             <Dialog open={dialogRestoreOpen.state} onOpenChange={setDialogRestoreOpen}>
-            <DialogContent>
-                <DialogHeader>
-                <DialogTitle>¿Reparar vehículo?</DialogTitle>
-                <DialogDescription>
-                    Esta acción reseteará el kilometraje y se sumará al total
-                </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <Button onClick={ reparar }>Reparar</Button>
-                </DialogFooter>
-            </DialogContent>
+                <DialogContent>
+                    <DialogHeader>
+                    <DialogTitle>¿Reparar vehículo?</DialogTitle>
+                    <DialogDescription>
+                        Esta acción reseteará el kilometraje y se sumará al total
+                    </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={ reparar }>Reparar</Button>
+                    </DialogFooter>
+                </DialogContent>
             </Dialog>
 
             <Dialog open={dialogDeleteOpen.state} onOpenChange={setDialogDeleteOpen}>
-            <DialogContent>
-                <DialogHeader>
-                <DialogTitle>¿Eliminar vehículo?</DialogTitle>
-                <DialogDescription>
-                    Esta acción eliminará del registro al vehículo
-                </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <Button onClick={ eliminar }>Eliminar</Button>
-                </DialogFooter>
-            </DialogContent>
+                <DialogContent>
+                    <DialogHeader>
+                    <DialogTitle>¿Eliminar vehículo?</DialogTitle>
+                    <DialogDescription>
+                        Esta acción eliminará del registro al vehículo
+                    </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={ eliminar }>Eliminar</Button>
+                    </DialogFooter>
+                </DialogContent>
             </Dialog>
         </>
     );

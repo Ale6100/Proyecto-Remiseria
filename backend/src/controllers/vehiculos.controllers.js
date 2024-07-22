@@ -7,17 +7,17 @@ export class VehiculoController {
 
     getAll = async(req, res) => {
         try {
-            let { page, limit } = req.query;
-            page = parseInt(page);
-            limit = parseInt(limit);
+            let { page, limit, ignoreLimit } = req.query;
+            if (page !== undefined) page = parseInt(page);
+            if (limit !== undefined) limit = parseInt(limit);
 
-            const badRequestError = VehiculoDto.badRequestGetAll({ page, limit });
+            const badRequestError = VehiculoDto.badRequestGetAll({ page, limit, ignoreLimit });
             if (badRequestError) {
                 req.logger.error(`${req.infoPeticion} | ${badRequestError}`)
                 return res.status(400).json({ statusCode: 400, error: badRequestError });
             }
 
-            const result = await this.vehiculoModel.getAll(page, limit);
+            const result = await this.vehiculoModel.getAll(page, limit, ignoreLimit);
             res.status(200).json({ statusCode: 200, payload: result });
         } catch (error) {
             req.logger.error(`${req.infoPeticion} | ${error.message}`)
@@ -29,7 +29,7 @@ export class VehiculoController {
         try {
             const { dominio, modelo, kmParciales, marca } = req.body;
             let { limit } = req.query;
-            limit = parseInt(limit);
+            if (limit !== undefined) limit = parseInt(limit);
 
             const badRequestError = VehiculoDto.badRequestCreate({ dominio, modelo, kmParciales, marca, limit });
             if (badRequestError) {
@@ -52,7 +52,7 @@ export class VehiculoController {
         try {
             const { id } = req.params;
             let { limit } = req.query;
-            limit = parseInt(limit);
+            if (limit !== undefined) limit = parseInt(limit);
 
             const badRequestError = VehiculoDto.badRequestDelete({ id, limit });
 

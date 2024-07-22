@@ -9,7 +9,7 @@ export default class VehiculoDto {
         };
     }
 
-    static badRequestGetAll({ page, limit }) {
+    static badRequestGetAll({ page, limit, ignoreLimit }) {
 
         if (page !== undefined && !(typeof page === 'number' && Number.isInteger(page) && page >= 0)) {
             return 'El parámetro "page" debe ser un número natural o cero';
@@ -17,6 +17,10 @@ export default class VehiculoDto {
 
         if (limit !== undefined && !(typeof limit === 'number' && Number.isInteger(limit) && limit > 0)) {
             return 'El parámetro "page" debe ser un número natural';
+        }
+
+        if (ignoreLimit !== undefined && ignoreLimit !== 'true' && ignoreLimit !== 'false') {
+            return 'ignoreLimit sólo puede ser true o false';
         }
         return '';
     }
@@ -39,7 +43,7 @@ export default class VehiculoDto {
         }
 
         if (limit !== undefined && !(typeof limit === 'number' && Number.isInteger(limit) && limit > 0)) {
-            return 'El parámetro "page" debe ser un número natural';
+            return 'El parámetro "limit" debe ser un número natural mayor a cero';
         }
 
         return '';

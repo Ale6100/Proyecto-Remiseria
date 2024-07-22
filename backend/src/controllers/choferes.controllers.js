@@ -8,7 +8,17 @@ export class ChoferController {
 
     getAll = async(req, res) => {
         try {
-            const result = await this.choferModel.getAll();
+            let { page, limit, ignoreLimit } = req.query;
+            if (page !== undefined) page = parseInt(page);
+            if (limit !== undefined) limit = parseInt(limit);
+
+            const badRequestError = ChoferoDto.badRequestGetAll({ page, limit, ignoreLimit });
+            if (badRequestError) {
+                req.logger.error(`${req.infoPeticion} | ${badRequestError}`)
+                return res.status(400).json({ statusCode: 400, error: badRequestError });
+            }
+
+            const result = await this.choferModel.getAll(page, limit, ignoreLimit);
             res.status(200).json({ statusCode: 200, payload: result });
         } catch (error) {
             req.logger.error(`${req.infoPeticion} | ${error.message}`)
@@ -34,9 +44,11 @@ export class ChoferController {
 
     create = async(req, res) => {
         try {
-            const { nombre, apellido, dni, tipoLicencia, fechaVencimiento } = req.body;
+            const { nombre, apellido, dni, tipoLicencia, fechaEmision } = req.body;
+            let { limit } = req.query;
+            if (limit !== undefined) limit = parseInt(limit);
 
-            const badRequestError = ChoferoDto.badRequestCreate({ nombre, apellido, dni, tipoLicencia, fechaVencimiento });
+            const badRequestError = ChoferoDto.badRequestCreate({ nombre, apellido, dni, tipoLicencia, fechaEmision, limit });
             if (badRequestError) {
                 req.logger.error(`${req.infoPeticion} | ${badRequestError}`)
                 return res.status(400).json({ statusCode: 400, error: badRequestError });
@@ -44,9 +56,9 @@ export class ChoferController {
 
             const choferDTO = ChoferoDto.create(req.body);
 
-            await this.choferModel.create(choferDTO);
+            const result = await this.choferModel.create(choferDTO);
 
-            res.status(200).json({ statusCode: 200, message: 'Chofer creado correctamente' });
+            res.status(200).json({ statusCode: 200, message: 'Chofer creado correctamente', payload: result });
         } catch (error) {
             req.logger.error(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });

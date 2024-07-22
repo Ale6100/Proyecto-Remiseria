@@ -3,7 +3,15 @@ export class VehiculoModel {
         this.connection = connection;
     }
 
-    async getAll(page = 1, limit = 10) {
+    async getAll(page = 1, limit = 10, ignoreLimit = 'false') {
+        if (ignoreLimit === 'true') {
+            const [ result ] = await this.connection.query('SELECT v.*, m.nombre AS marca FROM vehiculos AS v JOIN marcas AS m ON v.marca_id = m.id');
+            return {
+                data: result,
+                totalPages: 1
+            };
+        }
+
         const offset = (page - 1) * limit;
 
         const [[{ totalCount }]] = await this.connection.query(`

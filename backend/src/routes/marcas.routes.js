@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { MarcaController } from "../controllers/marcas.controller.js";
+import { MarcaController } from "../controllers/marcas.controllers.js";
 
 export const createMarcasRouter = ({ MarcaModel }) => {
     const router = Router();

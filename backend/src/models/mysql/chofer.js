@@ -3,9 +3,35 @@ export class ChoferModel {
         this.connection = connection;
     }
 
-    async getAll() {
-        const [ result ] = await this.connection.query('SELECT * FROM choferes');
-        return result
+    async getAll(page = 1, limit = 10, ignoreLimit = 'false') {
+        if (ignoreLimit === 'true') {
+            const [ result ] = await this.connection.query('SELECT c.*, l.tipo, l.fechaEmision FROM choferes AS c JOIN licencias AS l ON c.idLicencia = l.id');
+            return {
+                data: result,
+                totalPages: 1
+            };
+        }
+
+        const offset = (page - 1) * limit;
+
+        const [[{ totalCount }]] = await this.connection.query(`
+            SELECT COUNT(*) AS totalCount
+            FROM choferes
+        `);
+
+        const [ result ] = await this.connection.query(`
+            SELECT c.*, l.tipo, l.fechaEmision
+            FROM choferes AS c
+            JOIN licencias AS l ON c.idLicencia = l.id
+            LIMIT ? OFFSET ?
+        `, [limit, offset]);
+
+        const totalPages = Math.ceil(totalCount / limit);
+
+        return {
+            data: result,
+            totalPages
+        };
     }
 
     async getById(id) {
@@ -13,14 +39,25 @@ export class ChoferModel {
         return result
     }
 
-    async create(chofer) {
+    async create(chofer, limit = 10) {
         const [ resultInsert ] = await this.connection.query(`
-            INSERT INTO licencias (tipo, fechaVencimiento)
-            VALUES (?, ?)`, [chofer.tipoLicencia, chofer.fechaVencimiento]);
+            INSERT INTO licencias (tipo, fechaEmision)
+            VALUES (?, ?)`, [chofer.tipoLicencia, chofer.fechaEmision]);
 
-        await this.connection.query(`
+        const [ result ] = await this.connection.query(`
             INSERT INTO choferes (nombre, apellido, dni, idLicencia)
             VALUES (?, ?, ?, ?)`, [chofer.nombre, chofer.apellido, chofer.dni, resultInsert.insertId]);
+        const newId = result.insertId;
+
+        const [[{ totalCount }]] = await this.connection.query(`
+            SELECT COUNT(*) AS totalCount
+            FROM choferes
+        `);
+        const totalPages = Math.ceil(totalCount / limit);
+        return {
+            newId,
+            totalPages
+        };
     }
 
     async deleteById(id) {
