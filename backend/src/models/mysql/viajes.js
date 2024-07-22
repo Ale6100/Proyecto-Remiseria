@@ -11,7 +11,7 @@ export class ViajeModel {
             FROM viajes
         `);
 
-        const [result] = await this.connection.query(`
+        const [ result ] = await this.connection.query(`
             SELECT
                 vi.*,
                 c.nombre,
@@ -32,6 +32,24 @@ export class ViajeModel {
 
         return {
             data: result,
+            totalPages
+        };
+    }
+
+    async create(viaje, limit = 10) {
+        const [ result ] = await this.connection.query('INSERT INTO viajes (fecha, horas, minutos, kms, chofer_id, vehiculo_id, precio_por_km_id) VALUES (?, ?, ?, ?, ?, ?, ?)', [viaje.fecha, viaje.horas, viaje.minutos, viaje.kms, viaje.chofer_id, viaje.vehiculo_id, viaje.precio_por_km_id]);
+        const newId = result.insertId;
+
+        await this.connection.query('UPDATE vehiculos SET kmParciales = kmParciales + ? WHERE id = ?', [viaje.kms, viaje.vehiculo_id]);
+
+        const [[{ totalCount }]] = await this.connection.query(`
+            SELECT COUNT(*) AS totalCount
+            FROM viajes
+        `);
+        const totalPages = Math.ceil(totalCount / limit);
+
+        return {
+            newId,
             totalPages
         };
     }

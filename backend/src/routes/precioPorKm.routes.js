@@ -8,5 +8,7 @@ export const createPrecioPorKmRouter = ({ PrecioPorKmModel }) => {
 
     router.get("/last", precioPorKmController.getLast);
 
+    router.post("/", precioPorKmController.create);
+
     return router;
 }

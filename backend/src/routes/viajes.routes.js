@@ -8,7 +8,7 @@ export const createViajesRouter = ({ ViajeModel }) => {
 
     router.get("/", viajeController.getAll);
 
-    // router.post("/", viajeController.create);
+    router.post("/", viajeController.create);
 
     // router.delete("/:id", viajeController.deleteById);
 

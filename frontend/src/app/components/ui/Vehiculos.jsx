@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { toast } from "sonner";
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/Shadcn/table"
+import { agregarDisponibilidadVehiculos } from "../lib/utils";
 
 const limit = 10;
 
@@ -26,8 +27,8 @@ const formSchema = z.object({
     }).max(50, {
         message: 'El modelo no debe superar los 50 caracteres',
     }),
-    kmParciales: z.string().transform(val => Number(val)).refine((val) => Number.isInteger(val) && val >= 0, {
-        message: 'El kilometraje debe ser un número natural o cero',
+    kmParciales: z.string().transform(val => Number(val)).refine((val) => Number.isInteger(val) && val >= 0 && val < 100000, {
+        message: 'El kilometraje debe ser un número entero entre 0 y 100000',
     }),
     marca: z.string().min(1, {
         message: 'La marca es requerida',
@@ -49,8 +50,8 @@ const Vehiculos = () => {
 
     const table = useReactTable({
         data: vehiculos,
-        columns: [ { accessorKey: 'dominio', header: 'Patente' }, { accessorKey: 'marca', header: 'Marca' }, { accessorKey: 'modelo', header: 'Modelo' }, { accessorKey: 'kmParciales', header: 'Kilometraje' }, { accessorKey: 'kmTotales', header: 'Kilometraje total' }, { accessorKey: '6', header: 'Disponible', cell: ( { row }) => {
-            return row.original.kmParciales >= 15000 ? <Image src='./cross.svg' width={30} height={30} alt='Img check' /> : <Image src='./check.svg' width={30} height={30} alt='Img check' />
+        columns: [ { accessorKey: 'dominio', header: 'Patente' }, { accessorKey: 'marca', header: 'Marca' }, { accessorKey: 'modelo', header: 'Modelo' }, { accessorKey: 'kmParciales', header: 'Kilometraje' }, { accessorKey: 'kmTotales', header: 'Kilometraje total' }, { accessorKey: 'disponible', header: 'Disponible', cell: ( { row }) => {
+            return row.original.disponible ? <Image src='./check.svg' width={30} height={30} alt='Img check' /> : <Image src='./cross.svg' width={30} height={30} alt='Img check' />
         } }, { accessorKey: 'acciones', header: 'Acciones', cell: ({ row }) => {
             return (
                 <DropdownMenu>
@@ -79,13 +80,14 @@ const Vehiculos = () => {
                 const { payload } = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/vehiculos?page=${pageIndex}&limit=${limit}`).then((res) => res.json());
                 const { data, totalPages } = payload;
                 const marcas = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/marcas`).then((res) => res.json());
-                console.log('Vehiculos:', data);
+                const vehiculos = agregarDisponibilidadVehiculos(data);
+                console.log('Vehiculos:', vehiculos);
                 console.log('Marcas:', marcas);
-                if (data.length === 0 && pageIndex > 1) {
+                if (vehiculos.length === 0 && pageIndex > 1) {
                     setPageIndex(1);
                     toast(`La página ${pageIndex} ya no existe. Lo redirigimos a la página 1`);
                 } else {
-                    setVehiculos(data);
+                    setVehiculos(vehiculos);
                     setTotalPagesState(totalPages);
                     setMarcas(marcas.payload);
                 }
@@ -123,7 +125,7 @@ const Vehiculos = () => {
 
             setTotalPagesState(totalPages);
 
-            setVehiculos([...vehiculos, { ...values, kmTotales: 0, id: newId }]);
+            setVehiculos([...vehiculos, { ...values, kmTotales: 0, id: newId, disponible: parseInt(values.kmParciales) < 15000 }]);
             console.log('nuevos autos', [...vehiculos, { ...values, kmTotales: 0, id: newId }]);
 
             form.reset();
@@ -212,7 +214,7 @@ const Vehiculos = () => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {
-                                                    loading || marcas.map((marca) => (
+                                                    loading || marcas.map(marca => (
                                                         <SelectItem key={marca.id} value={marca.nombre}>{marca.nombre}</SelectItem>
                                                     ))
                                                 }

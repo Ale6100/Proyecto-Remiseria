@@ -9,12 +9,8 @@ import { Button } from "@/app/components/ui/Shadcn/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/app/components/ui/Shadcn/popover"
-import { cn } from "@/app/components/lib/utils"
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/Shadcn/popover"
+import { agregarDisponibilidadChoferes, cn } from "@/app/components/lib/utils"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { Calendar } from "@/app/components/ui/Shadcn/calendar"
 import { format } from "date-fns";
@@ -48,15 +44,13 @@ const Choferes = ({ dataPrecioPorKm }) => {
         columns: [ { accessorKey: 'nombre', header: 'Nombre' }, { accessorKey: 'apellido', header: 'Apellido' }, { accessorKey: 'dni', header: 'DNI' }, { accessorKey: 'kmViajados', header: 'Kilómetros recorridos', cell: ({ row }) => {
             return parseInt(row.original.kilometrosRecorridos);
         } }, { accessorKey: 'precioTotal', header: 'Precio total', cell : ({ row }) => {
-            return dataPrecioPorKm.precio_por_km*parseInt(row.original.kilometrosRecorridos);
+            return `$${dataPrecioPorKm.precio_por_km*parseInt(row.original.kilometrosRecorridos)}`;
         } }, { accessorKey: 'tipo', header: 'Tipo de Licencia', cell: ({ row }) => {
             return row.original.tipo === 'profesionales' ? 'Profesional' : 'Particular';
         } }, { accessorKey: 'fechaEmision', header: 'Fecha de emisión', cell: ({ row }) => {
-            return format(new Date(row.original.fechaEmision), "PPP", { locale: es }, { locale: es });
+            return format(new Date(row.original.fechaEmision), "PPP", { locale: es });
         } }, { accessorKey: 'disponible', header: 'Disponible', cell: ({ row }) => {
-            const aniosAgregados = row.original.tipo === 'profesionales' ? 1 : 5;
-            const dateEmision = new Date(row.original.fechaEmision);
-            return dateEmision.setFullYear(dateEmision.getFullYear()+aniosAgregados) < new Date() ? <Image src='./cross.svg' width={30} height={30} alt='Img check' /> : <Image src='./check.svg' width={30} height={30} alt='Img check' />;
+            return row.original.disponible ? <Image src='./check.svg' width={30} height={30} alt='Img check' /> : <Image src='./cross.svg' width={30} height={30} alt='Img check' /> ;
         } }, { accessorKey: 'acciones', header: 'Acciones', cell: ({ row }) => {
             return (
                 <DropdownMenu>
@@ -84,10 +78,11 @@ const Choferes = ({ dataPrecioPorKm }) => {
             try {
                 const { payload } = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes?idPrecioPorKm=${dataPrecioPorKm.id}&page=${pageIndex}&limit=${limit}`).then((res) => res.json());
                 const { data, totalPages } = payload;
-                console.log('Choferes:', data);
+                const choferes = agregarDisponibilidadChoferes(data);
+                console.log('Choferes:', choferes);
                 console.log('Total pages:', totalPages);
 
-                setChoferes(data);
+                setChoferes(choferes);
                 setTotalPagesState(totalPages);
                 toast("Choferes")
             } catch (error) {
@@ -96,7 +91,7 @@ const Choferes = ({ dataPrecioPorKm }) => {
             setLoading(false);
         };
         fetchDatos();
-    }, [pageIndex]);
+    }, [pageIndex, dataPrecioPorKm]);
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -124,7 +119,9 @@ const Choferes = ({ dataPrecioPorKm }) => {
 
             setTotalPagesState(totalPages);
 
-            setChoferes([...choferes, { id: newId, ...values, kilometrosRecorridos: 0 }]);
+            const aniosAgregados = values.tipoLicencia === 'profesionales' ? 1 : 5;
+            const dateEmision = new Date(values.fechaEmision);
+            setChoferes([...choferes, { id: newId, ...values, kilometrosRecorridos: 0, disponible: dateEmision.setFullYear(dateEmision.getFullYear()+aniosAgregados) > new Date() }]);
 
             form.reset();
             setIsDialogOpen(false);
@@ -331,7 +328,7 @@ const Choferes = ({ dataPrecioPorKm }) => {
             <button onClick={ () => setPageIndex(index => index+1) } disabled={pageIndex === totalPagesState || totalPagesState == 0} className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Siguiente</button>
         </div>
 
-        <p>En la columna "Kilómetros recorridos" y "Precio total", se están considerando únicamente los viajes con el precio por kilómetro actual</p>
+        <p>En la columna "Kilómetros recorridos" y "Precio total" se están considerando únicamente los viajes con el precio por kilómetro actual</p>
 
         <Dialog open={dialogRenewOpen.state} onOpenChange={setDialogRenewOpen}>
             <DialogContent>
@@ -365,16 +362,3 @@ const Choferes = ({ dataPrecioPorKm }) => {
 };
 
 export default Choferes;
-
-/*
-Cada columna tiene:
-- Nombre
-- Apellido
-- DNI
-- Kilometros que manejó (Se calcula con la tabla viajes)
-- Precio por kilometro
-- Tipo de licencia
-- Fecha de emisión de la licencia
-- Fecha de vencimiento de la licencia
-- Habilitado para conducir (licencia no vencida)
-*/
