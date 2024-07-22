@@ -51,7 +51,7 @@ const Vehiculos = () => {
         data: vehiculos,
         columns: [ { accessorKey: 'dominio', header: 'Patente' }, { accessorKey: 'marca', header: 'Marca' }, { accessorKey: 'modelo', header: 'Modelo' }, { accessorKey: 'kmParciales', header: 'Kilometraje' }, { accessorKey: 'kmTotales', header: 'Kilometraje total' }, { accessorKey: '6', header: 'Disponible', cell: ( { row }) => {
             return row.original.kmParciales >= 15000 ? <Image src='./cross.svg' width={30} height={30} alt='Img check' /> : <Image src='./check.svg' width={30} height={30} alt='Img check' />
-        } }, { accessorKey: '7', header: 'Acciones', cell: ({ row }) => {
+        } }, { accessorKey: 'acciones', header: 'Acciones', cell: ({ row }) => {
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger><Image src='./config.svg' width={30} height={30} alt='Img config' /></DropdownMenuTrigger>
@@ -165,8 +165,6 @@ const Vehiculos = () => {
 
             console.log('Total pages:', payload);
 
-            // setTotalPagesState(payload);
-
             const nuevoVehiculos = vehiculos.filter(v => v.id !== idVehicle);
 
             if (nuevoVehiculos.length === 0 && pageIndex > 1) {
@@ -250,70 +248,70 @@ const Vehiculos = () => {
                     </Form>
                 </DialogContent>
             </Dialog>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filtar por marca"
-          value={(table.getColumn("marca")?.getFilterValue()) ?? ""}
-          onChange={(event) =>
-            table.getColumn("marca")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-      </div>
-        <Table>
-            <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                    return (
-                    <TableHead key={header.id}>
-                        {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                            )}
-                    </TableHead>
-                    )
-                })}
-                </TableRow>
-            ))}
-            </TableHeader>
-            <TableBody>
-                {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                    <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && "selected"}
-                    >
-                        {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            <div className="flex items-center py-4">
+                <Input
+                placeholder="Filtar por marca"
+                value={(table.getColumn("marca")?.getFilterValue()) ?? ""}
+                onChange={(event) =>
+                    table.getColumn("marca")?.setFilterValue(event.target.value)
+                }
+                className="max-w-sm"
+                />
+            </div>
+            <Table>
+                <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                        return (
+                        <TableHead key={header.id}>
+                            {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                                )}
+                        </TableHead>
+                        )
+                    })}
+                    </TableRow>
+                ))}
+                </TableHeader>
+                <TableBody>
+                    {table.getRowModel().rows?.length ? (
+                        table.getRowModel().rows.map((row) => (
+                        <TableRow
+                            key={row.id}
+                            data-state={row.getIsSelected() && "selected"}
+                        >
+                            {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                            ))}
+                        </TableRow>
+                        ))
+                    ) : (
+                        <TableRow>
+                        <TableCell colSpan={ table.getAllColumns() } className="h-24 text-center">
+                            No hay vehículos
                         </TableCell>
-                        ))}
-                    </TableRow>
-                    ))
-                ) : (
-                    <TableRow>
-                    <TableCell colSpan={ table.getAllColumns() } className="h-24 text-center">
-                        No hay vehículos
-                    </TableCell>
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
 
-      <div className="inline-flex -space-x-px text-sm">
-    <button onClick={ () => setPageIndex(index => index-1) } disabled={pageIndex === 1} className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</button>
-    {
-    pageIndex !== 1 && <button onClick={ () => setPageIndex(1) } className="flex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">1</button>
-    }
-    <button className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ pageIndex }</button>
-    {
-    pageIndex !== totalPagesState && totalPagesState !== 0 && <button onClick={ () => setPageIndex(totalPagesState) } className="lex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ totalPagesState }</button>
-    }
-    <button onClick={ () => setPageIndex(index => index+1) } disabled={pageIndex === totalPagesState || totalPagesState == 0} className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</button>
-    </div>
+            <div className="inline-flex -space-x-px text-sm">
+                <button onClick={ () => setPageIndex(index => index-1) } disabled={pageIndex === 1} className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Anterior</button>
+                {
+                pageIndex !== 1 && <button onClick={ () => setPageIndex(1) } className="flex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">1</button>
+                }
+                <button className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ pageIndex }</button>
+                {
+                pageIndex !== totalPagesState && totalPagesState !== 0 && <button onClick={ () => setPageIndex(totalPagesState) } className="lex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ totalPagesState }</button>
+                }
+                <button onClick={ () => setPageIndex(index => index+1) } disabled={pageIndex === totalPagesState || totalPagesState == 0} className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Siguiente</button>
+            </div>
 
             <Dialog open={dialogRestoreOpen.state} onOpenChange={setDialogRestoreOpen}>
                 <DialogContent>

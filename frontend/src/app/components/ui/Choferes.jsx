@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/app/components/ui/Shadcn/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/app/components/ui/Shadcn/dialog";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/Shadcn/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/Shadcn/select";
@@ -17,8 +18,10 @@ import { cn } from "@/app/components/lib/utils"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { Calendar } from "@/app/components/ui/Shadcn/calendar"
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/Shadcn/table"
+import Image from 'next/image';
 
 const limit = 10;
 
@@ -30,17 +33,43 @@ const formSchema = z.object({
     fechaEmision: z.date({ message: 'La fecha de emisión es requerida' })
 });
 
-const Choferes = () => {
+const Choferes = ({ dataPrecioPorKm }) => {
     const [ choferes, setChoferes ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ columnFilters, setColumnFilters ] = useState([]);
     const [ pageIndex, setPageIndex ] = useState(1);
     const [ totalPagesState, setTotalPagesState ] = useState(1);
     const [ isDialogOpen, setIsDialogOpen ] = useState(false);
+    const [ dialogDeleteOpen, setDialogDeleteOpen ] = useState({ state: false, idChofer: null });
+    const [ dialogRenewOpen, setDialogRenewOpen ] = useState({ state: false, idChofer: null });
 
     const table = useReactTable({
         data: choferes,
-        columns: [ { accessorKey: 'nombre', header: 'Nombre' }, { accessorKey: 'apellido', header: 'Apellido' }, { accessorKey: 'dni', header: 'DNI' }, { accessorKey: 'kmViajados', header: 'Kilómetros recorridos' }, { accessorKey: 'precioPorKm', header: 'Precio por Km' }, { accessorKey: 'tipoLicencia', header: 'Tipo de Licencia' }, { accessorKey: 'fechaEmision', header: 'Fecha de emisión' } ],
+        columns: [ { accessorKey: 'nombre', header: 'Nombre' }, { accessorKey: 'apellido', header: 'Apellido' }, { accessorKey: 'dni', header: 'DNI' }, { accessorKey: 'kmViajados', header: 'Kilómetros recorridos', cell: ({ row }) => {
+            return parseInt(row.original.kilometrosRecorridos);
+        } }, { accessorKey: 'precioTotal', header: 'Precio total', cell : ({ row }) => {
+            return dataPrecioPorKm.precio_por_km*parseInt(row.original.kilometrosRecorridos);
+        } }, { accessorKey: 'tipo', header: 'Tipo de Licencia', cell: ({ row }) => {
+            return row.original.tipo === 'profesionales' ? 'Profesional' : 'Particular';
+        } }, { accessorKey: 'fechaEmision', header: 'Fecha de emisión', cell: ({ row }) => {
+            return format(new Date(row.original.fechaEmision), "PPP", { locale: es }, { locale: es });
+        } }, { accessorKey: 'disponible', header: 'Disponible', cell: ({ row }) => {
+            const aniosAgregados = row.original.tipo === 'profesionales' ? 1 : 5;
+            const dateEmision = new Date(row.original.fechaEmision);
+            return dateEmision.setFullYear(dateEmision.getFullYear()+aniosAgregados) < new Date() ? <Image src='./cross.svg' width={30} height={30} alt='Img check' /> : <Image src='./check.svg' width={30} height={30} alt='Img check' />;
+        } }, { accessorKey: 'acciones', header: 'Acciones', cell: ({ row }) => {
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger><Image src='./config.svg' width={30} height={30} alt='Img config' /></DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className='cursor-pointer' onClick={() => setDialogRenewOpen({ state: true, idChofer: row.original.id })}>Renovar licencia</DropdownMenuItem>
+                        <DropdownMenuItem className='cursor-pointer' onClick={() => setDialogDeleteOpen({ state: true, idChofer: row.original.id })}>Eliminar</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            )
+        } } ],
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onColumnFiltersChange: setColumnFilters,
@@ -53,7 +82,7 @@ const Choferes = () => {
     useEffect(() => {
         const fetchDatos = async () => {
             try {
-                const { payload } = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes?page=${pageIndex}&limit=${limit}`).then((res) => res.json());
+                const { payload } = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes?idPrecioPorKm=${dataPrecioPorKm.id}&page=${pageIndex}&limit=${limit}`).then((res) => res.json());
                 const { data, totalPages } = payload;
                 console.log('Choferes:', data);
                 console.log('Total pages:', totalPages);
@@ -95,11 +124,55 @@ const Choferes = () => {
 
             setTotalPagesState(totalPages);
 
-            setChoferes([...choferes, { id: newId, ...values }]);
+            setChoferes([...choferes, { id: newId, ...values, kilometrosRecorridos: 0 }]);
 
             form.reset();
             setIsDialogOpen(false);
             setPageIndex(1);
+        } catch (error) {
+            console.log('Error:', error);
+        }
+    };
+
+    const renovar = async () => {
+        try {
+            const { idChofer } = dialogRenewOpen;
+
+            await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes/renewLicence/${idChofer}`, {
+                method: 'PUT',
+            });
+
+            setChoferes(choferes.map((chofer) => {
+                if (chofer.id === idChofer) {
+                    return { ...chofer, fechaEmision: new Date().toISOString() };
+                }
+                return chofer;
+            }));
+
+            setDialogRenewOpen({ state: false, idChofer: null });
+        } catch (error) {
+            console.log('Error:', error);
+        }
+    }
+
+    const eliminar = async () => {
+        try {
+            const { idChofer } = dialogDeleteOpen;
+
+            const { payload } = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes/${idChofer}?limit=${limit}`, {
+                method: 'DELETE',
+            }).then((res) => res.json());
+
+            console.log('Total pages:', payload);
+
+            const newChoferes = choferes.filter((chofer) => chofer.id !== idChofer);
+
+            if (newChoferes.length === 0 && pageIndex > 1) {
+                setPageIndex(index => index - 1);
+            } else {
+                setChoferes(newChoferes);
+            }
+            setDialogDeleteOpen({ state: false, idChofer: null });
         } catch (error) {
             console.log('Error:', error);
         }
@@ -172,7 +245,7 @@ const Choferes = () => {
                                     <Popover>
                                         <PopoverTrigger asChild>
                                         <FormControl>
-                                            <Button variant={"outline"} className={cn("w-[240px] pl-3 text-left font-normal", !field.value && "text-muted-foreground" )}> { field.value ? format(field.value, "PPP") : <span>Selecciona una fecha</span> }
+                                            <Button variant={"outline"} className={cn("w-[240px] pl-3 text-left font-normal", !field.value && "text-muted-foreground" )}> { field.value ? format(field.value, "PPP", { locale: es }) : <span>Selecciona una fecha</span> }
                                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                             </Button>
                                         </FormControl>
@@ -245,6 +318,48 @@ const Choferes = () => {
                 )}
             </TableBody>
         </Table>
+
+        <div className="inline-flex -space-x-px text-sm">
+            <button onClick={ () => setPageIndex(index => index-1) } disabled={pageIndex === 1} className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Anterior</button>
+            {
+            pageIndex !== 1 && <button onClick={ () => setPageIndex(1) } className="flex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">1</button>
+            }
+            <button className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ pageIndex }</button>
+            {
+            pageIndex !== totalPagesState && totalPagesState !== 0 && <button onClick={ () => setPageIndex(totalPagesState) } className="lex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ totalPagesState }</button>
+            }
+            <button onClick={ () => setPageIndex(index => index+1) } disabled={pageIndex === totalPagesState || totalPagesState == 0} className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Siguiente</button>
+        </div>
+
+        <p>En la columna "Kilómetros recorridos" y "Precio total", se están considerando únicamente los viajes con el precio por kilómetro actual</p>
+
+        <Dialog open={dialogRenewOpen.state} onOpenChange={setDialogRenewOpen}>
+            <DialogContent>
+                <DialogHeader>
+                <DialogTitle>¿Renovar licencia?</DialogTitle>
+                <DialogDescription>
+                    Esta acción hará que la fecha de emisión de la licencia sea la actual
+                </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button onClick={ renovar }>Renovar</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        <Dialog open={dialogDeleteOpen.state} onOpenChange={setDialogDeleteOpen}>
+            <DialogContent>
+                <DialogHeader>
+                <DialogTitle>¿Eliminar chofer?</DialogTitle>
+                <DialogDescription>
+                    Esta acción eliminará del registro al chofer
+                </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button onClick={ eliminar }>Eliminar</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
         </>
     );
 };

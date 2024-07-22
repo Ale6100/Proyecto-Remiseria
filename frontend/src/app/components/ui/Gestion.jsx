@@ -30,8 +30,9 @@ export default function Gestion () {
         <p>Gestione aquí sus choferes, autos y viajes</p>
 
         {
-        dataPrecioPorKm.id && <p>Precio por kilómetro actual: ${ dataPrecioPorKm.precio_por_km } | Última actualización: {dataPrecioPorKm.mes}/{dataPrecioPorKm.anio}</p>
-        }
+        dataPrecioPorKm.id &&
+        <>
+        <p>Precio por kilómetro actual: ${ dataPrecioPorKm.precio_por_km } | Última actualización: {dataPrecioPorKm.mes}/{dataPrecioPorKm.anio}</p>
 
         <Tabs defaultValue="choferes">
             <TabsList className='w-full bg-transparent'>
@@ -42,9 +43,11 @@ export default function Gestion () {
             </div>
             </TabsList>
             <TabsContent value="vehiculos"><Vehiculos /></TabsContent>
-            <TabsContent value="choferes"><Choferes /></TabsContent>
+            <TabsContent value="choferes"><Choferes dataPrecioPorKm={dataPrecioPorKm}/></TabsContent>
             <TabsContent value="viajes"><Viajes dataPrecioPorKm={dataPrecioPorKm} /></TabsContent>
         </Tabs>
+        </>
+        }
         </section>
     );
 }

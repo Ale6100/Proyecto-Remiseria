@@ -5,19 +5,6 @@ export default class ChoferDto {
     };
 
     static create({ nombre, apellido, dni, tipoLicencia, fechaEmision }) {
-        // if (!fechaEmision) {
-        //     const fechaActual = new Date();
-        //     if (tipoLicencia === this.tipoLicenciaDTO["1"]) {
-        //         fechaActual.setFullYear(fechaActual.getFullYear() + 1);
-        //         fecha_vencimiento = fechaActual.toISOString().slice(0, 10);
-        //     } else if (tipoLicencia === this.tipoLicenciaDTO["2"]) {
-        //         fechaActual.setFullYear(fechaActual.getFullYear() + 5);
-        //         fecha_vencimiento = fechaActual.toISOString().slice(0, 10);
-        //     }
-        // } else {
-        //     fecha_vencimiento = fechaEmision;
-        // }
-
         return {
             nombre,
             apellido,
@@ -27,7 +14,10 @@ export default class ChoferDto {
         };
     }
 
-    static badRequestGetAll({ page, limit, ignoreLimit }) {
+    static badRequestGetAll({ idPrecioPorKm, page, limit, ignoreLimit }) {
+        if (!(typeof idPrecioPorKm === 'number' && Number.isInteger(idPrecioPorKm) && idPrecioPorKm > 0)) {
+            return 'El parámetro "idPrecioPorKm" debe ser un número natural';
+        }
 
         if (page !== undefined && !(typeof page === 'number' && Number.isInteger(page) && page >= 0)) {
             return 'El parámetro "page" debe ser un número natural o cero';
@@ -62,6 +52,18 @@ export default class ChoferDto {
 
         if (limit !== undefined && !(typeof limit === 'number' && Number.isInteger(limit) && limit > 0)) {
             return 'El parámetro "limit" debe ser un número natural mayor a cero';
+        }
+
+        return '';
+    }
+
+    static badRequestDelete({ id, limit }) {
+        if (id === undefined) {
+            return 'Se requiere un ID de chofer para realizar la eliminación';
+        }
+
+        if (limit !== undefined && !(typeof limit === 'number' && Number.isInteger(limit) && limit > 0)) {
+            return 'El parámetro "limit" debe ser un número natural';
         }
 
         return '';

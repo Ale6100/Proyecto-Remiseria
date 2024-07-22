@@ -14,5 +14,7 @@ export const createChoferesRouter = ({ ChoferModel }) => {
 
     router.delete("/:id", choferController.deleteById);
 
+    router.put("/renewLicence/:id", choferController.renewLicence);
+
     return router;
 }

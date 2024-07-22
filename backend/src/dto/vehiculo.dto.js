@@ -55,7 +55,7 @@ export default class VehiculoDto {
         }
 
         if (limit !== undefined && !(typeof limit === 'number' && Number.isInteger(limit) && limit > 0)) {
-            return 'El parámetro "page" debe ser un número natural';
+            return 'El parámetro "limit" debe ser un número natural';
         }
 
         return '';
