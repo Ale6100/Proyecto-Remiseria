@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+main {
+  min-height: 100dvh;
+}
+
+/* Estilos de shadcn */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -68,5 +73,129 @@
   }
 }
 
-/* Fondo de pantalla obtenido de https://www.mshr.app/ */
+/* Estilos del Loader */
+.loader-container {
+  --uib-size: 40px;
+  --uib-color: black;
+  --uib-speed: .9s;
+  --uib-center: calc(var(--uib-size) / 2 - var(--uib-size) / 5 / 2);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: var(--uib-size);
+  width: var(--uib-size);
+  animation: rotate calc(var(--uib-speed) * 3) linear infinite;
+}
+
+.loader-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+}
+
+.loader-dot::before {
+  content: '';
+  height: 20%;
+  width: 20%;
+  border-radius: 50%;
+  background-color: var(--uib-color);
+  animation: oscillate var(--uib-speed) ease-in-out infinite alternate;
+  transition: background-color 0.3s ease;
+}
+
+.loader-dot:nth-child(1)::before {
+  transform: translateX(var(--uib-center));
+}
+
+.loader-dot:nth-child(2) {
+  transform: rotate(45deg);
+}
+
+.loader-dot:nth-child(2)::before {
+  transform: translateX(var(--uib-center));
+  animation-delay: calc(var(--uib-speed) * -0.125);
+}
+
+.loader-dot:nth-child(3) {
+  transform: rotate(90deg);
+}
+
+.loader-dot:nth-child(3)::before {
+  transform: translateX(var(--uib-center));
+  animation-delay: calc(var(--uib-speed) * -0.25);
+}
+
+.loader-dot:nth-child(4) {
+  transform: rotate(135deg);
+}
+
+.loader-dot:nth-child(4)::before {
+  transform: translateX(var(--uib-center));
+  animation-delay: calc(var(--uib-speed) * -0.375);
+}
+
+.loader-dot:nth-child(5) {
+  transform: rotate(180deg);
+}
+
+.loader-dot:nth-child(5)::before {
+  transform: translateX(var(--uib-center));
+  animation-delay: calc(var(--uib-speed) * -0.5);
+}
+
+.loader-dot:nth-child(6) {
+  transform: rotate(225deg);
+}
+
+.loader-dot:nth-child(6)::before {
+  transform: translateX(var(--uib-center));
+  animation-delay: calc(var(--uib-speed) * -0.625);
+}
+
+.loader-dot:nth-child(7) {
+  transform: rotate(270deg);
+}
+
+.loader-dot:nth-child(7)::before {
+  transform: translateX(var(--uib-center));
+  animation-delay: calc(var(--uib-speed) * -0.75);
+}
+
+.loader-dot:nth-child(8) {
+  transform: rotate(315deg);
+}
+
+.loader-dot:nth-child(8)::before {
+  transform: translateX(var(--uib-center));
+  animation-delay: calc(var(--uib-speed) * -0.875);
+}
+
+@keyframes oscillate {
+  0% {
+    transform: translateX(var(--uib-center)) scale(0);
+    opacity: 0.25;
+  }
+
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fondo de pantalla obtenido de https://www.mshr.app */
 @keyframes hero-gradient-animation{0%{--x-0:85%; --c-0:hsla(150.8823529411765,52%,83%,1); --s-start-0:9%; --s-end-0:55%; --y-0:80%; --x-1:60%; --y-1:24%; --c-1:hsla(219.99999999999997,100%,82%,1); --s-start-1:5%; --s-end-1:72%; --y-2:82%; --s-start-2:5%; --s-end-2:52%; --c-2:hsla(297.7941176470588,100%,65%,0.49); --x-2:13%; --x-3:24%; --s-start-3:13%; --s-end-3:68%; --y-3:7%; --c-3:hsla(182,72%,68%,1);}100%{--x-0:31%; --c-0:hsla(150.8823529411765,52%,83%,1); --s-start-0:9%; --s-end-0:55%; --y-0:94%; --x-1:2%; --y-1:25%; --c-1:hsla(220,82%,95%,1); --s-start-1:5%; --s-end-1:72%; --y-2:20%; --s-start-2:5%; --s-end-2:52%; --c-2:hsla(297.7941176470588,100%,65%,0.49); --x-2:98%; --x-3:95%; --s-start-3:13%; --s-end-3:68%; --y-3:92%; --c-3:hsla(182,72%,68%,1);}}@property --x-0{syntax:'<percentage>';inherits:false;initial-value:85%}@property --c-0{syntax:'<color>';inherits:false;initial-value:hsla(150.8823529411765,52%,83%,1)}@property --s-start-0{syntax:'<percentage>';inherits:false;initial-value:9%}@property --s-end-0{syntax:'<percentage>';inherits:false;initial-value:55%}@property --y-0{syntax:'<percentage>';inherits:false;initial-value:80%}@property --x-1{syntax:'<percentage>';inherits:false;initial-value:60%}@property --y-1{syntax:'<percentage>';inherits:false;initial-value:24%}@property --c-1{syntax:'<color>';inherits:false;initial-value:hsla(219.99999999999997,100%,82%,1)}@property --s-start-1{syntax:'<percentage>';inherits:false;initial-value:5%}@property --s-end-1{syntax:'<percentage>';inherits:false;initial-value:72%}@property --y-2{syntax:'<percentage>';inherits:false;initial-value:82%}@property --s-start-2{syntax:'<percentage>';inherits:false;initial-value:5%}@property --s-end-2{syntax:'<percentage>';inherits:false;initial-value:52%}@property --c-2{syntax:'<color>';inherits:false;initial-value:hsla(297.7941176470588,100%,65%,0.49)}@property --x-2{syntax:'<percentage>';inherits:false;initial-value:13%}@property --x-3{syntax:'<percentage>';inherits:false;initial-value:24%}@property --s-start-3{syntax:'<percentage>';inherits:false;initial-value:13%}@property --s-end-3{syntax:'<percentage>';inherits:false;initial-value:68%}@property --y-3{syntax:'<percentage>';inherits:false;initial-value:7%}@property --c-3{syntax:'<color>';inherits:false;initial-value:hsla(182,72%,68%,1)} body{--x-0:85%;--c-0:hsla(150.8823529411765,52%,83%,1);--y-0:80%;--x-1:60%;--y-1:24%;--c-1:hsla(219.99999999999997,100%,82%,1);--y-2:82%;--c-2:hsla(297.7941176470588,100%,65%,0.49);--x-2:13%;--x-3:24%;--y-3:7%;--c-3:hsla(182,72%,68%,1);;background-color:hsla(358.0000000000001,0%,100%,1);background-image:radial-gradient(circle at var(--x-0) var(--y-0), var(--c-0) var(--s-start-0),transparent var(--s-end-0)),radial-gradient(circle at var(--x-1) var(--y-1), var(--c-1) var(--s-start-1),transparent var(--s-end-1)),radial-gradient(circle at var(--x-2) var(--y-2), var(--c-2) var(--s-start-2),transparent var(--s-end-2)),radial-gradient(circle at var(--x-3) var(--y-3), var(--c-3) var(--s-start-3),transparent var(--s-end-3));animation:hero-gradient-animation 10s linear infinite alternate;background-blend-mode:normal,normal,normal,normal;}

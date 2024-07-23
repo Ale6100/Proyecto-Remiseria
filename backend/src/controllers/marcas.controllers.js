@@ -10,7 +10,7 @@ export class MarcaController {
             const result = await this.marcaModel.getAll();
             res.status(200).json({ statusCode: 200, payload: result });
         } catch (error) {
-            req.logger.error(`${req.infoPeticion} | ${error.message}`)
+            req.logger.fatal(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });
         }
     }
@@ -31,7 +31,7 @@ export class MarcaController {
 
             res.status(200).json({ statusCode: 200, message: 'Marca creada correctamente' });
         } catch (error) {
-            req.logger.error(`${req.infoPeticion} | ${error.message}`)
+            req.logger.fatal(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });
         }
     }
@@ -48,7 +48,7 @@ export class MarcaController {
 
             res.status(200).json({ statusCode: 200, message: 'Marca eliminada correctamente' });
         } catch (error) {
-            req.logger.error(`${req.infoPeticion} | ${error.message}`)
+            req.logger.fatal(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });
         }
     }

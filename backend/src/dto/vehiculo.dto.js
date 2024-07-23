@@ -34,12 +34,12 @@ export default class VehiculoDto {
             return 'dominio, modelo y marca deben ser cadenas de texto';
         }
 
-        if (dominio.length > 20 || modelo.length > 50 || marca.length >= 50) {
+        if (dominio.length > 20 || modelo.length > 50 || marca.length > 50) {
             return 'dominio, modelo y marca deben tener una longitud máxima de 20, 20 y 50 caracteres respectivamente';
         }
 
-        if (typeof kmParciales !== 'number' || kmParciales < 0) {
-            return 'kmParciales deben ser un número mayor o igual a cero';
+        if (typeof kmParciales !== 'number' || kmParciales < 0 || kmParciales >= 1000000) {
+            return 'kmParciales deben ser un número entero menor a 1000000';
         }
 
         if (limit !== undefined && !(typeof limit === 'number' && Number.isInteger(limit) && limit > 0)) {

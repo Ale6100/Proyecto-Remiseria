@@ -39,7 +39,7 @@ export default class ChoferDto {
         }
 
         if (typeof nombre !== 'string' || typeof apellido !== 'string' || typeof dni !== 'string' || typeof tipoLicencia !== 'string') {
-            return 'Nombre, apellido, DNI y fechaEmision deben ser cadenas de texto';
+            return 'Nombre, apellido, DNI y tipoLicencia deben ser cadenas de texto';
         }
 
         if (nombre.length > 45 || apellido.length > 45 || dni.length > 9) {

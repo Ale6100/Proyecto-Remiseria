@@ -2,8 +2,6 @@
 
 Bienvenido! En este proyecto presento una aplicación web simple para gestionar choferes, autos y viajes de una remisería utilizando frontend en NextJS y backend en ExpressJS por separado.
 
-**El proyecto y este readme aún no están terminados**
-
 ## Deploy 🚀
 
 [https://proyecto-remiseria.vercel.app](https://proyecto-remiseria.vercel.app)

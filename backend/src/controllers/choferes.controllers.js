@@ -22,7 +22,7 @@ export class ChoferController {
             const result = await this.choferModel.getAll(idPrecioPorKm, page, limit, ignoreLimit);
             res.status(200).json({ statusCode: 200, payload: result });
         } catch (error) {
-            req.logger.error(`${req.infoPeticion} | ${error.message}`)
+            req.logger.fatal(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });
         }
     }
@@ -38,30 +38,30 @@ export class ChoferController {
             const result = await this.choferModel.getById(id);
             res.status(200).json({ statusCode: 200, payload: result });
         } catch (error) {
-            req.logger.error(`${req.infoPeticion} | ${error.message}`)
+            req.logger.fatal(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });
         }
     }
 
     create = async(req, res) => {
         try {
-            const { nombre, apellido, dni, tipoLicencia, fechaEmision } = req.body;
+            const body = req.body;
             let { limit } = req.query;
             if (limit !== undefined) limit = parseInt(limit);
 
-            const badRequestError = ChoferoDto.badRequestCreate({ nombre, apellido, dni, tipoLicencia, fechaEmision, limit });
+            const badRequestError = ChoferoDto.badRequestCreate({ ...body, limit: limit });
             if (badRequestError) {
                 req.logger.error(`${req.infoPeticion} | ${badRequestError}`)
                 return res.status(400).json({ statusCode: 400, error: badRequestError });
             }
 
-            const choferDTO = ChoferoDto.create(req.body);
+            const choferDTO = ChoferoDto.create(body);
 
-            const result = await this.choferModel.create(choferDTO);
+            const result = await this.choferModel.create(choferDTO, limit);
 
             res.status(200).json({ statusCode: 200, message: 'Chofer creado correctamente', payload: result });
         } catch (error) {
-            req.logger.error(`${req.infoPeticion} | ${error.message}`)
+            req.logger.fatal(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });
         }
     }
@@ -79,9 +79,13 @@ export class ChoferController {
             }
 
             const totalPages = await this.choferModel.deleteById(id);
-            res.status(200).json({ statusCode: 200, message: 'Chofer eliminado correctamente' , payload: totalPages});
+            res.status(200).json({ statusCode: 200, message: 'Chofer eliminado correctamente', payload: totalPages});
         } catch (error) {
-            req.logger.error(`${req.infoPeticion} | ${error.message}`)
+            if (error.message.includes('a foreign key constraint fails')) {
+                req.logger.error(`${req.infoPeticion} | No se puede eliminar un chofer que tenga viajes asociados`)
+                return res.status(400).json({ statusCode: 400, error: 'No se puede eliminar un chofer que tenga viajes asociados' });
+            }
+            req.logger.fatal(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });
         }
     }
@@ -97,7 +101,7 @@ export class ChoferController {
             await this.choferModel.renewLicence(id);
             res.status(200).json({ statusCode: 200, message: 'Licencia renovada correctamente' });
         } catch (error) {
-            req.logger.error(`${req.infoPeticion} | ${error.message}`)
+            req.logger.fatal(`${req.infoPeticion} | ${error.message}`)
             res.status(500).json({ statusCode: 500, error: error.message });
         }
     }

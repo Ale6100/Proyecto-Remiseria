@@ -16,7 +16,7 @@ export default class PrecioPorKmDto {
     static badRequestCreate({ precio_por_km }) {
         if (precio_por_km === undefined) return 'El precio por kilómetro es requerido';
 
-        if (typeof precio_por_km !== 'number' || !Number.isInteger(precio_por_km) || precio_por_km <= 0) return 'El precio por kilómetro debe ser un número natural';
+        if (typeof precio_por_km !== 'number' || !Number.isInteger(precio_por_km) || precio_por_km <= 0 || precio_por_km >= 1000000) return 'El precio por kilómetro debe ser un número natural menor a 1000000';
 
         return '';
     }
