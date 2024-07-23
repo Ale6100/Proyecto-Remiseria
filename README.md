@@ -55,13 +55,31 @@ MYSQL_PASSWORD = X
 MYSQL_DATABASE = X
 ```
 
-Corre el proyecto con el comando
+Asegúrate de que el valor que hayas puesto en MYSQL_DATABASE sea una base de datos ya existente.
+
+Si es la primera vez que levantas el proyecto necesitarás ejecutar los comandos del archivo [backend/src/config/createTables.sql](./backend/src/config/createTables.sql) para tener las tablas necesarias.
+
+Una vez que hayas seguido estos pasos puedes correr el proyecto con el comando
 
 ```bash
 npm run dev
 ```
 
 Una vez que veas el mensaje "Servidor escuchando en el puerto 8080" (puerto configurado por defecto), podrás comenzar a utilizarlo sin problemas.
+
+## Construido con 🛠️
+
+* [NodeJS v20.15.1](https://nodejs.org/)
+* [ExpressJs](https://expressjs.com/)
+* [NextJs 14](https://nextjs.org/)
+* [MySQL](https://www.mysql.com/)
+* [ReactJS](https://reactjs.org/)
+* [Tailwind](https://tailwindcss.com/)
+* [cors](https://www.npmjs.com/package/cors)
+* [dotenv](https://www.npmjs.com/package/dotenv)
+* [shadcn](https://ui.shadcn.com/)
+* [sweetalert2](https://sweetalert2.github.io/)
+* [winston](https://www.npmjs.com/package/winston)
 
 ## Autor ✒️
 

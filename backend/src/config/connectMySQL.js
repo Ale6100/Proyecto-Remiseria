@@ -11,4 +11,7 @@ const config = {
     database
 }
 
-export default await mysql.createConnection(config);
+const connection = await mysql.createConnection(config);
+
+export default connection;
+
