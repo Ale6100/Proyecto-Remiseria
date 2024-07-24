@@ -14,6 +14,7 @@ export class ChoferModel {
                 JOIN licencias AS l ON c.idLicencia = l.id
                 LEFT JOIN viajes AS v ON c.id = v.chofer_id AND v.precio_por_km_id = ?
                 GROUP BY c.id, l.id
+                ORDER BY c.id
             `, [idPrecioPorKm]);
             return {
                 data: result,
@@ -35,6 +36,7 @@ export class ChoferModel {
             JOIN licencias AS l ON c.idLicencia = l.id
             LEFT JOIN viajes AS v ON c.id = v.chofer_id AND v.precio_por_km_id = ?
             GROUP BY c.id, l.id
+            ORDER BY c.id
             LIMIT ? OFFSET ?
         `, [idPrecioPorKm, limit, offset]);
 

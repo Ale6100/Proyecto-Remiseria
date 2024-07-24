@@ -15,6 +15,7 @@ import { es } from "date-fns/locale";
 import { Loader2 } from "lucide-react";
 import Pagination from "./Pagination";
 import TableGral from "./TableGral";
+import CustomFilter from "./CustomFilter";
 
 const limit = 10;
 
@@ -29,32 +30,32 @@ const Viajes = ({ dataPrecioPorKm }) => {
     const [ choferes, setChoferes ] = useState([]);
     const [ vehiculos, setVehiculos ] = useState([]);
     const [ loading, setLoading ] = useState(true);
-    const [ columnFilters, setColumnFilters ] = useState([]);
     const [ pageIndex, setPageIndex ] = useState(1);
     const [ totalPagesState, setTotalPagesState ] = useState(1);
     const [ isDialogOpen, setIsDialogOpen ] = useState(false);
     const [ saveTravelIsLoading, setSaveTravelIsLoading ] = useState(false);
+    const [ filtering, setFiltering ] = useState('');
 
     const table = useReactTable({
         data: viajes,
         columns: [
-            { accessorKey: 'fecha', header: 'Fecha', cell: ({ row }) => format(new Date(row.original.fecha), "PPP", { locale: es }) },
+            { accessorKey: 'fecha', header: 'Fecha', accessorFn: row => format(new Date(row.fecha), "PPP", { locale: es }) },
             { accessorKey: 'horas', header: 'Hora' },
             { accessorKey: 'minutos', header: 'Minutos' },
-            { accessorKey: 'kms', header: 'Kilómetros', cell: ({ row }) => parseInt(row.original.kms) },
+            { accessorKey: 'kms', header: 'Kilómetros', accessorFn: row => `${parseInt(row.kms)}` },
             { id: 'choferNombre', accessorKey: 'chofer.nombre', header: 'Nombre' },
             { accessorKey: 'chofer.apellido', header: 'Apellido' },
-            { accessorKey: 'vehiculo.dominio', header: 'Patente' },
             { accessorKey: 'vehiculo.marca', header: 'Marca auto' },
-            { accessorKey: 'vehiculo.modelo', header: 'Modelo auto' }
+            { accessorKey: 'vehiculo.modelo', header: 'Modelo auto' },
+            { accessorKey: 'vehiculo.dominio', header: 'Patente' }
         ],
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         state: {
-            columnFilters,
+            globalFilter: filtering,
         },
+        onGlobalFilterChange: setFiltering,
     })
 
     useEffect(() => {
@@ -207,9 +208,7 @@ const Viajes = ({ dataPrecioPorKm }) => {
             </DialogContent>
         </Dialog>
 
-        <div className="flex items-center py-4">
-            <Input placeholder="Filtar por nombre" value={table.getColumn("choferNombre")?.getFilterValue() ?? ""} onChange={event => table.getColumn("choferNombre")?.setFilterValue(event.target.value)} className="max-w-sm" />
-        </div>
+        <CustomFilter filtering={filtering} setFiltering={setFiltering} />
 
         <TableGral table={table} msgEmpty="No hay viajes" />
 

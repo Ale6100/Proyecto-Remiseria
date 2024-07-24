@@ -16,6 +16,7 @@ import { agregarDisponibilidadVehiculos, fetcher } from "../lib/utils";
 import Pagination from "./Pagination";
 import TableGral from "./TableGral";
 import DialogGral from "./DialogGral";
+import CustomFilter from "./CustomFilter";
 
 const limit = 10;
 
@@ -33,17 +34,17 @@ const Vehiculos = () => {
     const [ isDialogOpen, setIsDialogOpen ] = useState(false);
     const [ dialogDeleteOpen, setDialogDeleteOpen ] = useState({ state: false, idVehicle: null });
     const [ dialogRestoreOpen, setDialogRestoreOpen ] = useState({ state: false, idVehicle: null });
-    const [ columnFilters, setColumnFilters ] = useState([]);
     const [ pageIndex, setPageIndex ] = useState(1);
     const [ totalPagesState, setTotalPagesState ] = useState(1);
     const [ saveCarIsLoading, setSaveCarIsLoading ] = useState(false);
+    const [ filtering, setFiltering ] = useState('');
 
     const table = useReactTable({
         data: vehiculos,
         columns: [
-            { accessorKey: 'dominio', header: 'Patente' },
             { accessorKey: 'marca', header: 'Marca' },
             { accessorKey: 'modelo', header: 'Modelo' },
+            { accessorKey: 'dominio', header: 'Patente' },
             { accessorKey: 'kmParciales', header: 'Kilometraje' },
             { accessorKey: 'kmTotales', header: 'Kilometraje total' },
             { accessorKey: 'disponible', header: 'Disponible', cell: ( { row }) => row.original.disponible ? <Image src='./check.svg' width={30} height={30} alt='Img check' /> : <Image src='./cross.svg' width={30} height={30} alt='Img check' /> },
@@ -63,11 +64,11 @@ const Vehiculos = () => {
         ],
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         state: {
-          columnFilters,
+            globalFilter: filtering,
         },
+        onGlobalFilterChange: setFiltering,
     })
 
     useEffect(() => {
@@ -126,7 +127,7 @@ const Vehiculos = () => {
 
                 toast("Vehículo registrado correctamente");
                 setTotalPagesState(totalPages);
-                setVehiculos([...vehiculos, { ...values, kmTotales: 0, id: newId, disponible: parseInt(values.kmParciales) < 15000 }]);
+                setVehiculos([...vehiculos, { ...values, kmTotales: parseInt(values.kmParciales), id: newId, disponible: parseInt(values.kmParciales) < 15000 }]);
                 form.reset();
             } else if (response.statusCode !== 500) {
                 toast(response.error);
@@ -152,7 +153,7 @@ const Vehiculos = () => {
                 toast("Vehículo reparado correctamente");
                 setVehiculos(vehiculos.map(v => {
                     if (v.id === idVehicle) {
-                        return { ...v, kmTotales: v.kmTotales + v.kmParciales, kmParciales: 0, disponible: true };
+                        return { ...v, kmParciales: 0, disponible: true };
                     }
                     return v;
                 }));
@@ -260,15 +261,13 @@ const Vehiculos = () => {
             </DialogContent>
         </Dialog>
 
-        <div className="flex items-center py-4">
-            <Input placeholder="Filtar por marca" value={table.getColumn("marca")?.getFilterValue() ?? ""} onChange={event => table.getColumn("marca")?.setFilterValue(event.target.value)} className="max-w-sm" />
-        </div>
+        <CustomFilter filtering={filtering} setFiltering={setFiltering} />
 
         <TableGral table={table} msgEmpty="No hay vehículos" />
 
         <Pagination className="mt-2 mb-10 flex justify-center text-sm" pageIndex={pageIndex} setPageIndex={setPageIndex} totalPagesState={totalPagesState} />
 
-        <DialogGral dialogOpen={dialogRestoreOpen} setDialogOpen={setDialogRestoreOpen} title="¿Reparar vehículo?" description="Esta acción reseteará el kilometraje y se sumará al total" btnText="Reparar" btnAction={reparar} />
+        <DialogGral dialogOpen={dialogRestoreOpen} setDialogOpen={setDialogRestoreOpen} title="¿Reparar vehículo?" description="Esta acción reseteará el kilometraje" btnText="Reparar" btnAction={reparar} />
 
         <DialogGral dialogOpen={dialogDeleteOpen} setDialogOpen={setDialogDeleteOpen} title="¿Eliminar vehículo?" description="Esta acción eliminará del registro al vehículo" btnText="Eliminar" btnAction={eliminar} />
         </>

@@ -20,6 +20,7 @@ import Image from 'next/image';
 import Pagination from "./Pagination";
 import TableGral from "./TableGral";
 import DialogGral from "./DialogGral";
+import CustomFilter from "./CustomFilter";
 
 const limit = 10;
 
@@ -34,13 +35,13 @@ const formSchema = z.object({
 const Choferes = ({ dataPrecioPorKm }) => {
     const [ choferes, setChoferes ] = useState([]);
     const [ loading, setLoading ] = useState(true);
-    const [ columnFilters, setColumnFilters ] = useState([]);
     const [ pageIndex, setPageIndex ] = useState(1);
     const [ totalPagesState, setTotalPagesState ] = useState(1);
     const [ isDialogOpen, setIsDialogOpen ] = useState(false);
     const [ dialogDeleteOpen, setDialogDeleteOpen ] = useState({ state: false, idChofer: null });
     const [ dialogRenewOpen, setDialogRenewOpen ] = useState({ state: false, idChofer: null });
     const [ saveWorkerIsLoading, setSaveWorkerIsLoading ] = useState(false);
+    const [ filtering, setFiltering ] = useState('');
 
     const table = useReactTable({
         data: choferes,
@@ -48,10 +49,10 @@ const Choferes = ({ dataPrecioPorKm }) => {
             { accessorKey: 'nombre', header: 'Nombre' },
             { accessorKey: 'apellido', header: 'Apellido' },
             { accessorKey: 'dni', header: 'DNI' },
-            { accessorKey: 'kmViajados', header: 'Kilómetros recorridos', cell: ({ row }) => parseInt(row.original.kilometrosRecorridos) },
-            { accessorKey: 'precioTotal', header: 'Precio total', cell : ({ row }) => `$${dataPrecioPorKm.precio_por_km*parseInt(row.original.kilometrosRecorridos)}` },
-            { accessorKey: 'tipo', header: 'Tipo de Licencia', cell: ({ row }) => row.original.tipo === 'profesionales' ? 'Profesional' : 'Particular' },
-            { accessorKey: 'fechaEmision', header: 'Fecha de emisión', cell: ({ row }) => format(new Date(row.original.fechaEmision), "PPP", { locale: es }) },
+            { accessorKey: 'kmViajados', header: 'Kilómetros recorridos', accessorFn: row => `${parseInt(row.kilometrosRecorridos)}` },
+            { accessorKey: 'precioTotal', header: 'Precio total', accessorFn: row => `$${dataPrecioPorKm.precio_por_km*parseInt(row.kilometrosRecorridos)}` },
+            { accessorKey: 'tipo', header: 'Tipo de Licencia', accessorFn: row => row.tipo === 'profesionales' ? 'Profesional' : 'Particular' },
+            { accessorKey: 'fechaEmision', header: 'Fecha de emisión', accessorFn: row => format(new Date(row.fechaEmision), "PPP", { locale: es }) },
             { accessorKey: 'disponible', header: 'Disponible', cell: ({ row }) => row.original.disponible ? <Image src='./check.svg' width={30} height={30} alt='Img check' /> : <Image src='./cross.svg' width={30} height={30} alt='Img check' /> },
             { accessorKey: 'acciones', header: 'Acciones', cell: ({ row }) => {
                 return (
@@ -69,11 +70,11 @@ const Choferes = ({ dataPrecioPorKm }) => {
         ],
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         state: {
-            columnFilters,
+            globalFilter: filtering,
         },
+        onGlobalFilterChange: setFiltering,
     })
 
     useEffect(() => {
@@ -272,9 +273,7 @@ const Choferes = ({ dataPrecioPorKm }) => {
             </DialogContent>
         </Dialog>
 
-        <div className="flex items-center py-4">
-            <Input placeholder="Filtar por nombre" value={table.getColumn("nombre")?.getFilterValue() ?? ""} onChange={event => table.getColumn("nombre")?.setFilterValue(event.target.value) } className="max-w-sm"/>
-        </div>
+        <CustomFilter filtering={filtering} setFiltering={setFiltering} />
 
         <TableGral table={table} msgEmpty="No hay choferes" />
 

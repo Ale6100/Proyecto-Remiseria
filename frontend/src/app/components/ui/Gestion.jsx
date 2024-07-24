@@ -70,68 +70,72 @@ export default function Gestion () {
         setIsDialogOpen(false);
     };
 
+    let content = <p>El servidor no responde, por favor intente de nuevo más tarde</p>;
+    if (loading) {
+        content = (
+            <div className='flex flex-col gap-10 items-center'>
+                <p className='max-md:text-sm'>Por favor espere. El servidor gratuito donde alojo el backend se suspende por inactividad</p>
+                <Loader />
+            </div>
+        );
+    } else if (dataPrecioPorKm.id) {
+        content = (
+            <>
+            <div className='flex flex-col gap-3'>
+                <p>Precio por kilómetro: <span className='font-bold'>${ dataPrecioPorKm.precio_por_km }</span> </p>
+                <div className='flex max-md:justify-between md:gap-5'>
+                    <p>Última actualización: {dataPrecioPorKm.dia}/{dataPrecioPorKm.mes}/{dataPrecioPorKm.anio}</p>
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogTrigger className='h-6 w-20 bg-blue-800 text-white rounded md:hover:bg-blue-600 md:active:bg-blue-950 max-md:active:bg-blue-600'>Cambiar</DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Registrar nuevo precio por kilómetro</DialogTitle>
+                            </DialogHeader>
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(guardar)} className="grid gap-4 border-4 border-black p-2 rounded">
+                                    <FormField control={form.control} name="precio_por_km" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Precio por kilómetro</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="0" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+
+                                    <Button className='col-span-full' type="submit" disabled={saveIsLoading}>
+                                        {saveIsLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Guardando...</> : "Guardar"}
+                                    </Button>
+                                </form>
+                            </Form>
+                        </DialogContent>
+                    </Dialog>
+                </div>
+            </div>
+
+            <hr className='my-10 border-black border-dashed'></hr>
+
+            <Tabs defaultValue="vehiculos">
+                <TabsList className='w-full bg-transparent'>
+                <div className='mx-auto border-black rounded bg-gray-950 text-white'>
+                    <TabsTrigger value="vehiculos">Vehículos</TabsTrigger>
+                    <TabsTrigger className='mx-5' value="choferes">Choferes</TabsTrigger>
+                    <TabsTrigger value="viajes">Viajes</TabsTrigger>
+                </div>
+                </TabsList>
+                <TabsContent value="vehiculos"><Vehiculos /></TabsContent>
+                <TabsContent value="choferes"><Choferes dataPrecioPorKm={dataPrecioPorKm} /></TabsContent>
+                <TabsContent value="viajes"><Viajes dataPrecioPorKm={dataPrecioPorKm} /></TabsContent>
+            </Tabs>
+            </>
+        )
+    }
+
     return (
         <section className="px-4">
         <p className='my-3'>Gestione aquí sus vehículos, choferes y viajes</p>
 
-        {
-        loading ?
-        <div className='flex flex-col gap-10 items-center'>
-            <p className='max-md:text-sm'>Por favor espere. El servidor gratuito donde alojo el backend se suspende por inactividad</p>
-            <Loader />
-        </div>
-        : dataPrecioPorKm.id ?
-        <>
-        <div className='flex flex-col gap-3'>
-            <p>Precio por kilómetro actual: <span className='font-bold'>${ dataPrecioPorKm.precio_por_km }</span> </p>
-            <div className='flex max-md:justify-between md:gap-5'>
-                <p>Última actualización: {dataPrecioPorKm.dia}/{dataPrecioPorKm.mes}/{dataPrecioPorKm.anio}</p>
-
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger className='h-6 w-20 bg-blue-800 text-white rounded md:hover:bg-blue-600 md:active:bg-blue-950 max-md:active:bg-blue-600'>Cambiar</DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Registrar nuevo precio por kilómetro</DialogTitle>
-                        </DialogHeader>
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(guardar)} className="grid gap-4 border-4 border-black p-2 rounded">
-                                <FormField control={form.control} name="precio_por_km" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Precio por kilómetro</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="0" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
-
-                                <Button className='col-span-full' type="submit" disabled={saveIsLoading}>
-                                    {saveIsLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Guardando...</> : "Guardar"}
-                                </Button>
-                            </form>
-                        </Form>
-                    </DialogContent>
-                </Dialog>
-            </div>
-        </div>
-
-        <hr className='my-10 border-black border-dashed'></hr>
-
-        <Tabs defaultValue="vehiculos">
-            <TabsList className='w-full bg-transparent'>
-            <div className='mx-auto border-black rounded bg-gray-950 text-white'>
-                <TabsTrigger value="vehiculos">Vehículos</TabsTrigger>
-                <TabsTrigger className='mx-5' value="choferes">Choferes</TabsTrigger>
-                <TabsTrigger value="viajes">Viajes</TabsTrigger>
-            </div>
-            </TabsList>
-            <TabsContent value="vehiculos"><Vehiculos /></TabsContent>
-            <TabsContent value="choferes"><Choferes dataPrecioPorKm={dataPrecioPorKm} /></TabsContent>
-            <TabsContent value="viajes"><Viajes dataPrecioPorKm={dataPrecioPorKm} /></TabsContent>
-        </Tabs>
-        </>
-        : <p>El servidor no responde, por favor intente de nuevo más tarde</p>
-        }
+        {content}
         </section>
     );
 }

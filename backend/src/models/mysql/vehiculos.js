@@ -5,7 +5,13 @@ export class VehiculoModel {
 
     async getAll(page = 1, limit = 10, ignoreLimit = 'false') {
         if (ignoreLimit === 'true') {
-            const [ result ] = await this.connection.query('SELECT v.*, m.nombre AS marca FROM vehiculos AS v JOIN marcas AS m ON v.marca_id = m.id');
+            const [ result ] = await this.connection.query(`
+                SELECT v.*, m.nombre AS marca
+                FROM vehiculos AS v
+                JOIN marcas AS m ON v.marca_id = m.id
+                ORDER BY v.id
+                `
+            );
             return {
                 data: result,
                 totalPages: 1
@@ -23,6 +29,7 @@ export class VehiculoModel {
             SELECT v.*, m.nombre AS marca
             FROM vehiculos AS v
             JOIN marcas AS m ON v.marca_id = m.id
+            ORDER BY v.id
             LIMIT ? OFFSET ?
         `, [limit, offset]);
 
@@ -38,7 +45,7 @@ export class VehiculoModel {
         const [ marca ] = await this.connection.query('SELECT id FROM marcas WHERE nombre = ?', [vehiculo.marca]);
         const marcaId = marca[0].id;
 
-        const [ result ] = await this.connection.query('INSERT INTO vehiculos (dominio, modelo, kmParciales, kmTotales, marca_id) VALUES (?, ?, ?, ?, ?)', [vehiculo.dominio, vehiculo.modelo, vehiculo.kmParciales, 0, marcaId]);
+        const [ result ] = await this.connection.query('INSERT INTO vehiculos (dominio, modelo, kmParciales, kmTotales, marca_id) VALUES (?, ?, ?, ?, ?)', [vehiculo.dominio, vehiculo.modelo, vehiculo.kmParciales, vehiculo.kmParciales, marcaId]);
         const newId = result.insertId;
 
         const [[{ totalCount }]] = await this.connection.query(`
@@ -66,8 +73,7 @@ export class VehiculoModel {
     async resetKm(id) {
         await this.connection.query(`
             UPDATE vehiculos
-            SET kmTotales = kmTotales + kmParciales,
-                kmParciales = 0
+            SET kmParciales = 0
             WHERE id = ?
         `, [id]);
     }
