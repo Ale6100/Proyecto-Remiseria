@@ -126,7 +126,7 @@ const Viajes = ({ dataPrecioPorKm }) => {
 
                 const chofer = choferes.find(c => c.id == chofer_id);
                 const vehiculo = vehiculos.find(v => v.id == vehiculo_id);
-                const newViajes = [...viajes, { ...values, id: newId, chofer, vehiculo, fecha, horas, minutos }];
+                const newViajes = [...viajes, { ...values, id: newId, chofer: {...chofer, kilometrosRecorridos: parseInt(kms) + parseInt(chofer.kilometrosRecorridos)}, vehiculo: {...vehiculo, kmParciales: parseInt(vehiculo.kmParciales) + parseInt(kms), kmTotales: parseInt(vehiculo.kmTotales) + parseInt(kms)}, fecha, horas, minutos }];
 
                 setViajes(newViajes);
                 form.reset();

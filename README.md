@@ -1,10 +1,10 @@
 # Proyecto Remisería
 
-Bienvenido! En este proyecto presento una aplicación web simple para gestionar choferes, autos y viajes de una remisería utilizando frontend en NextJS y backend en ExpressJS por separado.
+Bienvenido! En este proyecto presento una aplicación web simple para gestionar automóviles, choferes y viajes de una remisería utilizando frontend en NextJS y backend en ExpressJS por separado.
 
 ## Instalación frontend 🛠️
 
-Párate en la carpeta [frontend](./frontend) y ejecuta el siguiente comando para instalar las dependencias
+Luego de descargar el proyecto, posicionate sobre la carpeta [frontend](./frontend) y ejecuta el siguiente comando para instalar las dependencias
 
 ```bash
 npm install
@@ -24,11 +24,11 @@ Corre el proyecto con el comando
 npm run dev
 ```
 
-Asegúrate de que la parte backend esté ejecutándose
+Asegúrate de que la parte backend esté ejecutándose. En la terminal figurará la URL de tu frontend listo para utilizar.
 
 ## Instalación backend 🛠️
 
-Párate en la carpeta [backend](./backend) y ejecuta el siguiente comando para instalar las dependencias
+Posicionate en la carpeta [backend](./backend) y ejecuta el siguiente comando para instalar las dependencias
 
 ```bash
 npm install
@@ -49,7 +49,7 @@ MYSQL_PASSWORD = X
 MYSQL_DATABASE = X
 ```
 
-Asegúrate de que el valor que hayas puesto en MYSQL_DATABASE sea una base de datos ya existente.
+Asegúrate de que el valor que hayas puesto en MYSQL_DATABASE sea el nombre de una base de datos ya existente.
 
 Si es la primera vez que levantas el proyecto necesitarás ejecutar los comandos del archivo [backend/src/config/createTables.sql](./backend/src/config/createTables.sql) para tener las tablas necesarias.
 

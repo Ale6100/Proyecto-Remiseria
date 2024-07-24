@@ -40,7 +40,10 @@ export class ViajeModel {
         const [ result ] = await this.connection.query('INSERT INTO viajes (fecha, horas, minutos, kms, chofer_id, vehiculo_id, precio_por_km_id) VALUES (?, ?, ?, ?, ?, ?, ?)', [viaje.fecha, viaje.horas, viaje.minutos, viaje.kms, viaje.chofer_id, viaje.vehiculo_id, viaje.precio_por_km_id]);
         const newId = result.insertId;
 
-        await this.connection.query('UPDATE vehiculos SET kmParciales = kmParciales + ? WHERE id = ?', [viaje.kms, viaje.vehiculo_id]);
+        await this.connection.query(
+            'UPDATE vehiculos SET kmParciales = kmParciales + ?, kmTotales = kmTotales + ? WHERE id = ?',
+            [viaje.kms, viaje.kms, viaje.vehiculo_id]
+        );
 
         const [[{ totalCount }]] = await this.connection.query(`
             SELECT COUNT(*) AS totalCount

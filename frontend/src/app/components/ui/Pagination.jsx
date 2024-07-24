@@ -7,7 +7,7 @@ const Pagination = ({ className, pageIndex, setPageIndex, totalPagesState }) => 
             }
             { pageIndex !== 2 && pageIndex !== 1 && <button onClick={ () => setPageIndex(index => index-1) } className="flex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ pageIndex-1 }</button>}
             <button className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ pageIndex }</button>
-            { pageIndex !== totalPagesState && pageIndex !== totalPagesState-1 && <button onClick={ () => setPageIndex(index => index+1) } className="flex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ pageIndex+1 }</button> }
+            { pageIndex !== totalPagesState && pageIndex !== totalPagesState-1 && totalPagesState !== 0 && <button onClick={ () => setPageIndex(index => index+1) } className="flex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ pageIndex+1 }</button> }
             {
             pageIndex !== totalPagesState && totalPagesState !== 0 && <button onClick={ () => setPageIndex(totalPagesState) } className="lex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ totalPagesState }</button>
             }
