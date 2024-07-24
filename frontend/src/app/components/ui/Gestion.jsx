@@ -5,13 +5,14 @@ import Viajes from "./Viajes";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/Shadcn/tabs"
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/app/components/ui/Shadcn/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/app/components/ui/Shadcn/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/Shadcn/form";
 import { z } from "zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/app/components/ui/Shadcn/input";
 import { Button } from "@/app/components/ui/Shadcn/button";
+import { Loader2 } from "lucide-react";
 import Loader from "./Loader";
 import { fetcher } from "../lib/utils";
 
@@ -23,6 +24,7 @@ export default function Gestion () {
     const [ dataPrecioPorKm, setDataPrecioPorKm ] = useState({});
     const [ loading, setLoading ] = useState(true);
     const [ isDialogOpen, setIsDialogOpen ] = useState(false);
+    const [ saveIsLoading, setSaveIsLoading ] = useState(false);
 
     useEffect(() => {
         const fetchDatos = async () => {
@@ -48,24 +50,29 @@ export default function Gestion () {
     });
 
     const guardar = async values => {
-        const response = await fetcher('precioPorKm', { method: 'POST', body: { precio_por_km: values.precio_por_km } });
+        setSaveIsLoading(true);
+        try {
+            const response = await fetcher('precioPorKm', { method: 'POST', body: { precio_por_km: values.precio_por_km } });
 
-        if (response.statusCode === 200) {
-            const { payload } = response;
-            setDataPrecioPorKm({ id: payload.newId, precio_por_km: values.precio_por_km, dia: payload.dia, mes: payload.mes, anio: payload.anio });
-            toast("Precio por kilómetro actualizado")
-        } else if (response.statusCode !== 500) {
-            toast(response.error);
-        } else {
-            toast("Error interio. Por favor intente de nuevo más tarde")
+            if (response.statusCode === 200) {
+                const { payload } = response;
+                setDataPrecioPorKm({ id: payload.newId, precio_por_km: values.precio_por_km, dia: payload.dia, mes: payload.mes, anio: payload.anio });
+                toast("Precio por kilómetro actualizado")
+            } else if (response.statusCode !== 500) {
+                toast(response.error);
+            } else {
+                toast("Error interio. Por favor intente de nuevo más tarde")
+            }
+        } catch (error) {
+           toast("Error interno. Por favor intente de nuevo más tarde")
         }
-
+        setSaveIsLoading(false);
         setIsDialogOpen(false);
     };
 
     return (
         <section className="px-4">
-        <p className='my-3'>Gestione aquí sus choferes, autos y viajes</p>
+        <p className='my-3'>Gestione aquí sus vehículos, choferes y viajes</p>
 
         {
         loading ?
@@ -98,7 +105,9 @@ export default function Gestion () {
                                     </FormItem>
                                 )} />
 
-                                <Button className='col-span-full' type="submit">Guardar</Button>
+                                <Button className='col-span-full' type="submit" disabled={saveIsLoading}>
+                                    {saveIsLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Guardando...</> : "Guardar"}
+                                </Button>
                             </form>
                         </Form>
                     </DialogContent>
@@ -121,7 +130,7 @@ export default function Gestion () {
             <TabsContent value="viajes"><Viajes dataPrecioPorKm={dataPrecioPorKm} /></TabsContent>
         </Tabs>
         </>
-        : <p>Error, por favor intente de nuevo más tarde</p>
+        : <p>El servidor no responde, por favor intente de nuevo más tarde</p>
         }
         </section>
     );

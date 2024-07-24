@@ -1,23 +1,25 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/app/components/ui/Shadcn/dropdown-menu";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/app/components/ui/Shadcn/dialog";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/Shadcn/form";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/app/components/ui/Shadcn/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/Shadcn/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/Shadcn/select";
 import { Input } from "@/app/components/ui/Shadcn/input";
 import { Button } from "@/app/components/ui/Shadcn/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/Shadcn/popover"
 import { agregarDisponibilidadChoferes, cn, fetcher } from "@/app/components/lib/utils"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon, Loader2 } from "lucide-react"
 import { Calendar } from "@/app/components/ui/Shadcn/calendar"
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/Shadcn/table"
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import Image from 'next/image';
+import Pagination from "./Pagination";
+import TableGral from "./TableGral";
+import DialogGral from "./DialogGral";
 
 const limit = 10;
 
@@ -38,6 +40,7 @@ const Choferes = ({ dataPrecioPorKm }) => {
     const [ isDialogOpen, setIsDialogOpen ] = useState(false);
     const [ dialogDeleteOpen, setDialogDeleteOpen ] = useState({ state: false, idChofer: null });
     const [ dialogRenewOpen, setDialogRenewOpen ] = useState({ state: false, idChofer: null });
+    const [ saveWorkerIsLoading, setSaveWorkerIsLoading ] = useState(false);
 
     const table = useReactTable({
         data: choferes,
@@ -104,6 +107,7 @@ const Choferes = ({ dataPrecioPorKm }) => {
     });
 
     const guardar = async values => {
+        setSaveWorkerIsLoading(true);
         try {
             const response = await fetcher('choferes', { method: 'POST', body: values });
 
@@ -123,12 +127,12 @@ const Choferes = ({ dataPrecioPorKm }) => {
             } else {
                 toast('Error interno. Por favor intente de nuevo más tarde');
             }
-            setIsDialogOpen(false);
-            setPageIndex(1);
-
         } catch (error) {
             toast('Error interno. Por favor intente de nuevo más tarde');
         }
+        setSaveWorkerIsLoading(false);
+        setIsDialogOpen(false);
+        setPageIndex(1);
     };
 
     const renovar = async () => {
@@ -260,7 +264,9 @@ const Choferes = ({ dataPrecioPorKm }) => {
                         )}
                         />
 
-                        <Button className='col-span-full' type="submit">Guardar</Button>
+                        <Button className='col-span-full' type="submit" disabled={saveWorkerIsLoading}>
+                            {saveWorkerIsLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Guardando...</> : "Guardar"}
+                        </Button>
                     </form>
                 </Form>
             </DialogContent>
@@ -270,86 +276,15 @@ const Choferes = ({ dataPrecioPorKm }) => {
             <Input placeholder="Filtar por nombre" value={table.getColumn("nombre")?.getFilterValue() ?? ""} onChange={event => table.getColumn("nombre")?.setFilterValue(event.target.value) } className="max-w-sm"/>
         </div>
 
-        <Table>
-            <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                    return (
-                    <TableHead key={header.id} className='font-bold text-black text-sm max-md:text-xs'>
-                        {
-                        header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())
-                        }
-                    </TableHead>
-                    )
-                })}
-                </TableRow>
-            ))}
-            </TableHeader>
-            <TableBody>
-                {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"} className='max-md:text-xs'>
-                        {row.getVisibleCells().map(cell => (
-                            <TableCell key={cell.id}>
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                    ))
-                ) : (
-                    <TableRow>
-                    <TableCell colSpan={ table.getAllColumns() } className="h-24 text-center">
-                        No hay choferes
-                    </TableCell>
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+        <TableGral table={table} msgEmpty="No hay choferes" />
 
-        <div className="my-2 flex justify-center text-sm">
-            <button onClick={ () => setPageIndex(index => index-1) } disabled={pageIndex === 1} className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Anterior</button>
-            {
-            pageIndex !== 1 && <button onClick={ () => setPageIndex(1) } className="flex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">1</button>
-            }
-            <button className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ pageIndex }</button>
-            {
-            pageIndex !== totalPagesState && totalPagesState !== 0 && <button onClick={ () => setPageIndex(totalPagesState) } className="lex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ totalPagesState }</button>
-            }
-            <button onClick={ () => setPageIndex(index => index+1) } disabled={pageIndex === totalPagesState || totalPagesState == 0} className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Siguiente</button>
-        </div>
+        <Pagination className="my-2 flex justify-center text-sm" pageIndex={pageIndex} setPageIndex={setPageIndex} totalPagesState={totalPagesState} />
 
-        <p className='mb-10'>En la columna "Kilómetros recorridos" y "Precio total" se están considerando únicamente los viajes con el precio por kilómetro actual</p>
+        <p className='mb-10'>En la columna "Kilómetros recorridos" y "Precio total" se están considerando únicamente los viajes realizados con el precio por kilómetro actual</p>
 
-        <Dialog open={dialogRenewOpen.state} onOpenChange={setDialogRenewOpen}>
-            <DialogContent>
-                <DialogHeader>
-                <DialogTitle>¿Renovar licencia?</DialogTitle>
-                <DialogDescription>
-                    Esta acción hará que la fecha de emisión de la licencia sea la actual
-                </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <Button onClick={ renovar }>Renovar</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+        <DialogGral dialogOpen={dialogRenewOpen} setDialogOpen={setDialogRenewOpen} title="¿Renovar licencia?" description="Esta acción hará que la fecha de emisión de la licencia sea la actual" btnText="Renovar" btnAction={renovar} />
 
-        <Dialog open={dialogDeleteOpen.state} onOpenChange={setDialogDeleteOpen}>
-            <DialogContent>
-                <DialogHeader>
-                <DialogTitle>¿Eliminar chofer?</DialogTitle>
-                <DialogDescription>
-                    Esta acción eliminará del registro al chofer
-                </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <Button onClick={ eliminar }>Eliminar</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+        <DialogGral dialogOpen={dialogDeleteOpen} setDialogOpen={setDialogDeleteOpen} title="¿Eliminar chofer?" description="Esta acción eliminará del registro al chofer" btnText="Eliminar" btnAction={eliminar} />
         </>
     );
 };

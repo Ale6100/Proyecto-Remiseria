@@ -80,6 +80,7 @@ Una vez que veas el mensaje "Servidor escuchando en el puerto 8080" (puerto conf
 * [shadcn](https://ui.shadcn.com/)
 * [sweetalert2](https://sweetalert2.github.io/)
 * [winston](https://www.npmjs.com/package/winston)
+* [moment-timezone](https://www.npmjs.com/package/moment-timezone)
 
 ## Autor ✒️
 

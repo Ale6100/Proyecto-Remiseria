@@ -1,9 +1,11 @@
+import moment from 'moment-timezone';
+
 export default class PrecioPorKmDto {
     static create({ precio_por_km }) {
-        const fechaActual = new Date();
-        const dia = fechaActual.getDate();
-        const mes = fechaActual.getMonth() + 1;
-        const anio = fechaActual.getFullYear();
+        const fechaActual = moment.tz('America/Argentina/Buenos_Aires');
+        const dia = fechaActual.date();
+        const mes = fechaActual.month() + 1;
+        const anio = fechaActual.year();
 
         return {
             precio_por_km,

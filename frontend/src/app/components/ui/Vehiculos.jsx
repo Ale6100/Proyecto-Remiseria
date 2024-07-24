@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/app/components/ui/Shadcn/button";
+import { Loader2 } from "lucide-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/components/ui/Shadcn/form";
 import { Input } from "@/app/components/ui/Shadcn/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/Shadcn/select";
 import Image from 'next/image';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/app/components/ui/Shadcn/dropdown-menu";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/app/components/ui/Shadcn/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/app/components/ui/Shadcn/dialog";
 import { toast } from "sonner";
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/Shadcn/table"
+import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { agregarDisponibilidadVehiculos, fetcher } from "../lib/utils";
+import Pagination from "./Pagination";
+import TableGral from "./TableGral";
+import DialogGral from "./DialogGral";
 
 const limit = 10;
 
@@ -33,6 +36,7 @@ const Vehiculos = () => {
     const [ columnFilters, setColumnFilters ] = useState([]);
     const [ pageIndex, setPageIndex ] = useState(1);
     const [ totalPagesState, setTotalPagesState ] = useState(1);
+    const [ saveCarIsLoading, setSaveCarIsLoading ] = useState(false);
 
     const table = useReactTable({
         data: vehiculos,
@@ -112,6 +116,7 @@ const Vehiculos = () => {
     });
 
     const guardar = async values => {
+        setSaveCarIsLoading(true);
         try {
             const response = await fetcher(`vehiculos?limit=${limit}`, { method: 'POST', body: values });
 
@@ -132,6 +137,7 @@ const Vehiculos = () => {
         } catch (error) {
             toast("Error interno. Por favor intente de nuevo más tarde");
         }
+        setSaveCarIsLoading(false);
         setIsDialogOpen(false);
         setPageIndex(1);
     };
@@ -246,92 +252,25 @@ const Vehiculos = () => {
                             </FormItem>
                         )} />
 
-                        <Button className='col-span-full' type="submit">Guardar</Button>
+                        <Button className='col-span-full' type="submit" disabled={saveCarIsLoading}>
+                            {saveCarIsLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Guardando...</> : "Guardar"}
+                        </Button>
                     </form>
                 </Form>
             </DialogContent>
         </Dialog>
+
         <div className="flex items-center py-4">
             <Input placeholder="Filtar por marca" value={table.getColumn("marca")?.getFilterValue() ?? ""} onChange={event => table.getColumn("marca")?.setFilterValue(event.target.value)} className="max-w-sm" />
         </div>
-        <Table>
-            <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                    return (
-                    <TableHead key={header.id} className='font-bold text-black text-sm max-md:text-xs'>
-                        {
-                        header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())
-                        }
-                    </TableHead>
-                    )
-                })}
-                </TableRow>
-            ))}
-            </TableHeader>
-            <TableBody>
-                {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"} className='max-md:text-xs'>
-                        {row.getVisibleCells().map(cell => (
-                            <TableCell key={cell.id}>
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                    ))
-                ) : (
-                    <TableRow>
-                        <TableCell colSpan={ table.getAllColumns() } className="h-24 text-center">
-                            No hay vehículos
-                        </TableCell>
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
 
-        <div className="mt-2 mb-10 flex justify-center text-sm">
-            <button onClick={ () => setPageIndex(index => index-1) } disabled={pageIndex === 1} className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Anterior</button>
-            {
-            pageIndex !== 1 && <button onClick={ () => setPageIndex(1) } className="flex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">1</button>
-            }
-            <button className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ pageIndex }</button>
-            {
-            pageIndex !== totalPagesState && totalPagesState !== 0 && <button onClick={ () => setPageIndex(totalPagesState) } className="lex items-center justify-center px-3 h-8 border border-gray-300 bg-white hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{ totalPagesState }</button>
-            }
-            <button onClick={ () => setPageIndex(index => index+1) } disabled={pageIndex === totalPagesState || totalPagesState == 0} className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Siguiente</button>
-        </div>
+        <TableGral table={table} msgEmpty="No hay vehículos" />
 
-        <Dialog open={dialogRestoreOpen.state} onOpenChange={setDialogRestoreOpen}>
-            <DialogContent>
-                <DialogHeader>
-                <DialogTitle>¿Reparar vehículo?</DialogTitle>
-                <DialogDescription>
-                    Esta acción reseteará el kilometraje y se sumará al total
-                </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <Button onClick={ reparar }>Reparar</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+        <Pagination className="mt-2 mb-10 flex justify-center text-sm" pageIndex={pageIndex} setPageIndex={setPageIndex} totalPagesState={totalPagesState} />
 
-        <Dialog open={dialogDeleteOpen.state} onOpenChange={setDialogDeleteOpen}>
-            <DialogContent>
-                <DialogHeader>
-                <DialogTitle>¿Eliminar vehículo?</DialogTitle>
-                <DialogDescription>
-                    Esta acción eliminará del registro al vehículo
-                </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <Button onClick={ eliminar }>Eliminar</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+        <DialogGral dialogOpen={dialogRestoreOpen} setDialogOpen={setDialogRestoreOpen} title="¿Reparar vehículo?" description="Esta acción reseteará el kilometraje y se sumará al total" btnText="Reparar" btnAction={reparar} />
+
+        <DialogGral dialogOpen={dialogDeleteOpen} setDialogOpen={setDialogDeleteOpen} title="¿Eliminar vehículo?" description="Esta acción eliminará del registro al vehículo" btnText="Eliminar" btnAction={eliminar} />
         </>
     );
 };

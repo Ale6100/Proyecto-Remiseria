@@ -1,9 +1,11 @@
+import moment from 'moment-timezone';
+
 export default class ViajeDto {
     static create({ kms, chofer_id, vehiculo_id, precio_por_km_id }) {
-        const fechaActual = new Date();
-        const fecha = fechaActual.toISOString().slice(0, 10);
-        const horas = fechaActual.getHours();
-        const minutos = fechaActual.getMinutes();
+        const fechaActual = moment.tz('America/Argentina/Buenos_Aires');
+        const fecha = fechaActual.format('YYYY-MM-DD');
+        const horas = fechaActual.hours();
+        const minutos = fechaActual.minutes();
 
         return {
             fecha,

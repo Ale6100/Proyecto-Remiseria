@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 export class ChoferModel {
     constructor(connection) {
         this.connection = connection;
@@ -5,7 +7,7 @@ export class ChoferModel {
 
     async getAll(idPrecioPorKm, page = 1, limit = 10, ignoreLimit = 'false') {
         if (ignoreLimit === 'true') {
-            const [result] = await this.connection.query(`
+            const [ result ] = await this.connection.query(`
                 SELECT c.*, l.tipo, l.fechaEmision,
                 COALESCE(SUM(v.kms), 0) AS kilometrosRecorridos
                 FROM choferes AS c
@@ -26,7 +28,7 @@ export class ChoferModel {
             FROM choferes
         `);
 
-        const [result] = await this.connection.query(`
+        const [ result ] = await this.connection.query(`
             SELECT c.*, l.tipo, l.fechaEmision,
             COALESCE(SUM(v.kms), 0) AS kilometrosRecorridos
             FROM choferes AS c
@@ -89,7 +91,7 @@ export class ChoferModel {
     async renewLicence(id) {
         const [ resultSelect ] = await this.connection.query('SELECT * FROM choferes WHERE id = ?', [id]);
 
-        const fechaActual = new Date().toISOString().slice(0, 10);
+        const fechaActual = moment.tz('America/Argentina/Buenos_Aires').format('YYYY-MM-DD');
 
         await this.connection.query('UPDATE licencias SET fechaEmision = ? WHERE id = ?', [fechaActual, resultSelect[0].idLicencia]);
     }
