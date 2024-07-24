@@ -8,7 +8,7 @@ import { Button } from "@/app/components/ui/Shadcn/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { agregarDisponibilidadChoferes, agregarDisponibilidadVehiculos, completarDatosViajes } from "../lib/utils";
+import { agregarDisponibilidadChoferes, agregarDisponibilidadVehiculos, completarDatosViajes, fetcher } from "../lib/utils";
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/Shadcn/table"
 import { format } from "date-fns";
@@ -58,9 +58,9 @@ const Viajes = ({ dataPrecioPorKm }) => {
         const fetchDatos = async () => {
             try {
                 const [ resChoferes, resVehiculos, resViajes ] = await Promise.allSettled([
-                    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes?idPrecioPorKm=${dataPrecioPorKm.id}&ignoreLimit=true`).then(res => res.json()),
-                    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/vehiculos?ignoreLimit=true`).then(res => res.json()),
-                    fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/viajes?page=${pageIndex}&limit=${limit}`).then(res => res.json())
+                    fetcher(`choferes?idPrecioPorKm=${dataPrecioPorKm.id}&ignoreLimit=true`),
+                    fetcher(`vehiculos?ignoreLimit=true`),
+                    fetcher(`viajes?page=${pageIndex}&limit=${limit}`)
                 ]);
 
                 let error = false;
@@ -111,13 +111,7 @@ const Viajes = ({ dataPrecioPorKm }) => {
     const guardar = async values => {
         try {
             const { kms, chofer_id, vehiculo_id } = values;
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/viajes?limit=${limit}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ kms, chofer_id: parseInt(chofer_id), vehiculo_id: parseInt(vehiculo_id), precio_por_km_id: dataPrecioPorKm.id }),
-            }).then(res => res.json());
+            const response = await fetcher(`viajes?limit=${limit}`, { method: 'POST', body: { kms, chofer_id: parseInt(chofer_id), vehiculo_id: parseInt(vehiculo_id), precio_por_km_id: dataPrecioPorKm.id } });
 
             if (response.statusCode === 200) {
                 toast("Viaje registrado correctamente");

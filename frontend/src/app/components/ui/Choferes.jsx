@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/Shadcn/popover"
-import { agregarDisponibilidadChoferes, cn } from "@/app/components/lib/utils"
+import { agregarDisponibilidadChoferes, cn, fetcher } from "@/app/components/lib/utils"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { Calendar } from "@/app/components/ui/Shadcn/calendar"
 import { format } from "date-fns";
@@ -76,7 +76,7 @@ const Choferes = ({ dataPrecioPorKm }) => {
     useEffect(() => {
         const fetchDatos = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes?idPrecioPorKm=${dataPrecioPorKm.id}&page=${pageIndex}&limit=${limit}`).then(res => res.json());
+                const response = await fetcher(`choferes?idPrecioPorKm=${dataPrecioPorKm.id}&page=${pageIndex}&limit=${limit}`);
                 if (response.statusCode === 200) {
                     const { data, totalPages } = response.payload;
                     const choferes = agregarDisponibilidadChoferes(data);
@@ -105,13 +105,7 @@ const Choferes = ({ dataPrecioPorKm }) => {
 
     const guardar = async values => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(values)
-            }).then((res) => res.json());
+            const response = await fetcher('choferes', { method: 'POST', body: values });
 
             if (response.statusCode === 200) {
                 toast('Chofer registrado correctamente');
@@ -141,9 +135,7 @@ const Choferes = ({ dataPrecioPorKm }) => {
         try {
             const { idChofer } = dialogRenewOpen;
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes/renewLicence/${idChofer}`, {
-                method: 'PUT',
-            }).then(res => res.json());
+            const response = await fetcher(`choferes/renewLicence/${idChofer}`, { method: 'PUT' });
 
             if (response.statusCode === 200) {
                 toast('Licencia renovada correctamente');
@@ -167,9 +159,7 @@ const Choferes = ({ dataPrecioPorKm }) => {
         try {
             const { idChofer } = dialogDeleteOpen;
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/choferes/${idChofer}?limit=${limit}`, {
-                method: 'DELETE',
-            }).then(res => res.json());
+            const response = await fetcher(`choferes/${idChofer}?limit=${limit}`, { method: 'DELETE' });
 
             if (response.statusCode === 200) {
                 const newChoferes = choferes.filter((chofer) => chofer.id !== idChofer);

@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { toast } from "sonner";
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/Shadcn/table"
-import { agregarDisponibilidadVehiculos } from "../lib/utils";
+import { agregarDisponibilidadVehiculos, fetcher } from "../lib/utils";
 
 const limit = 10;
 
@@ -69,12 +69,12 @@ const Vehiculos = () => {
     useEffect(() => {
         const fetchDatos = async () => {
             try {
-                const responseVehiculos = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/vehiculos?page=${pageIndex}&limit=${limit}`).then(res => res.json());
+                const responseVehiculos = await fetcher(`vehiculos?page=${pageIndex}&limit=${limit}`);
                 if (responseVehiculos.statusCode === 200) {
                     const { data, totalPages } = responseVehiculos.payload;
                     const resVehiculos = agregarDisponibilidadVehiculos(data);
 
-                    const responseMarcas = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/marcas`).then(res => res.json());
+                    const responseMarcas = await fetcher('marcas');
                     if (responseMarcas.statusCode === 200) {
                         setMarcas(responseMarcas.payload);
                     } else {
@@ -113,13 +113,7 @@ const Vehiculos = () => {
 
     const guardar = async values => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/vehiculos?limit=${limit}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(values),
-            }).then(res => res.json());
+            const response = await fetcher(`vehiculos?limit=${limit}`, { method: 'POST', body: values });
 
             if (response.statusCode === 200) {
                 const { payload } = response;
@@ -146,9 +140,7 @@ const Vehiculos = () => {
         try {
             const { idVehicle } = dialogRestoreOpen;
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/vehiculos/resetKm/${idVehicle}`, {
-                method: 'PUT',
-            }).then(res => res.json());
+            const response = await fetcher(`vehiculos/resetKm/${idVehicle}`, { method: 'PUT' });
 
             if (response.statusCode === 200) {
                 toast("Vehículo reparado correctamente");
@@ -172,9 +164,7 @@ const Vehiculos = () => {
         try {
             const { idVehicle } = dialogDeleteOpen;
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/vehiculos/${idVehicle}?limit=${limit}`, {
-                method: 'DELETE',
-            }).then(res => res.json());
+            const response = await fetcher(`vehiculos/${idVehicle}?limit=${limit}`, { method: 'DELETE' });
 
             if (response.statusCode === 200) {
                 const nuevoVehiculos = vehiculos.filter(v => v.id !== idVehicle);

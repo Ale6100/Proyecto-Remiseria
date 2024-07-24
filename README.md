@@ -21,7 +21,7 @@ Es necesario crear variables de entorno mediante la elaboración de un archivo `
 ```env
 NEXT_PUBLIC_URL_BACKEND = X # URL de tu backend sin barra lateral final
 
-NEXT_PUBLIC_ACCESS_TOKEN = X # Cadena de caracteres utilizado como mecanismo de autenticación para asegurar que solamente los usuarios que presenten este token en los encabezados de sus solicitudes puedan acceder al backend. Importante: Su valor tiene que ser el mismo que el de la variable de entorno ACCESS_TOKEN que ponés en el backend
+NEXT_PUBLIC_ACCESS_TOKEN = X # Bearer Token. Importante: Su valor tiene que ser el mismo que el de la variable de entorno ACCESS_TOKEN que ponés en el backend
 ```
 
 Corre el proyecto con el comando
@@ -45,7 +45,7 @@ Al igual que el frontend, se necesitan variables de entorno, pero esta vez se de
 ```env
 URL_FRONTEND = X # URL de tu frontend sin barra lateral final
 
-ACCESS_TOKEN = X # Cadena de caracteres utilizado como mecanismo de autenticación para asegurar que solamente los usuarios que presenten este token en los encabezados de sus solicitudes puedan acceder al backend. Importante: Su valor tiene que ser el mismo que el de la variable de entorno ACCESS_TOKEN que ponés en el frontend
+ACCESS_TOKEN = X # Bearer Token. Importante: Su valor tiene que ser el mismo que el de la variable de entorno NEXT_PUBLIC_ACCESS_TOKEN que ponés en el frontend
 
 # Credenciales de mysql
 MYSQL_HOST = X

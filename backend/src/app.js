@@ -17,6 +17,7 @@ import { MarcaModel } from "./models/mysql/marcas.js";
 import { ViajeModel } from "./models/mysql/viajes.js";
 import { PrecioPorKmModel } from "./models/mysql/precioPorKm.js";
 import connectDB from "./config/connectMySQL.js";
+import validateToken from "./middlewares/validateToken.js";
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use(express.urlencoded({ extended: true })); // Habilita poder procesar y pa
 app.use(cors({ origin: config.site.urlfrontend ? [config.site.urlfrontend] : [] }))
 
 app.use(addLogger)
+app.use(validateToken)
 
 app.use("/", baseRouter)
 app.use("/choferes", createChoferesRouter({ ChoferModel: new ChoferModel(connectDB) }))

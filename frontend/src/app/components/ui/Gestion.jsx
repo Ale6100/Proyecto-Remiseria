@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/app/components/ui/Shadcn/input";
 import { Button } from "@/app/components/ui/Shadcn/button";
 import Loader from "./Loader";
+import { fetcher } from "../lib/utils";
 
 const formSchema = z.object({
     precio_por_km: z.string().transform(val => Number(val)).refine(val => Number.isInteger(val) && val > 0 && val < 1000000, { message: 'El precio debe ser un número natural menor a 1000000' })
@@ -25,7 +26,7 @@ export default function Gestion () {
 
     useEffect(() => {
         const fetchDatos = async () => {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/precioPorKm/last`).then(res => res.json());
+            const response = await fetcher('precioPorKm/last');
 
             if (response.statusCode === 200) {
                 setDataPrecioPorKm(response.payload);
@@ -47,15 +48,7 @@ export default function Gestion () {
     });
 
     const guardar = async values => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/precioPorKm`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                precio_por_km: values.precio_por_km
-            })
-        }).then(res => res.json());
+        const response = await fetcher('precioPorKm', { method: 'POST', body: { precio_por_km: values.precio_por_km } });
 
         if (response.statusCode === 200) {
             const { payload } = response;
@@ -115,7 +108,7 @@ export default function Gestion () {
 
         <hr className='my-10 border-black border-dashed'></hr>
 
-        <Tabs defaultValue="viajes">
+        <Tabs defaultValue="vehiculos">
             <TabsList className='w-full bg-transparent'>
             <div className='mx-auto border-black rounded bg-gray-950 text-white'>
                 <TabsTrigger value="vehiculos">Vehículos</TabsTrigger>
