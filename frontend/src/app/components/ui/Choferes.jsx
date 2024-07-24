@@ -34,7 +34,6 @@ const formSchema = z.object({
 
 const Choferes = ({ dataPrecioPorKm }) => {
     const [ choferes, setChoferes ] = useState([]);
-    const [ loading, setLoading ] = useState(true);
     const [ pageIndex, setPageIndex ] = useState(1);
     const [ totalPagesState, setTotalPagesState ] = useState(1);
     const [ isDialogOpen, setIsDialogOpen ] = useState(false);
@@ -90,9 +89,8 @@ const Choferes = ({ dataPrecioPorKm }) => {
                     toast('Error interno. Por favor intente de nuevo más tarde');
                 }
             } catch (error) {
-                console.log('Error:', error);
+                toast('Error interno. Por favor intente de nuevo más tarde');
             }
-            setLoading(false);
         };
         fetchDatos();
     }, [pageIndex, dataPrecioPorKm]);
