@@ -1,4 +1,10 @@
-# Proyecto Remisería
+# Proyecto Remisería (versión nueva no terminada)
+
+Nota: En esta rama se encuentra una nueva versión donde estoy migrando el backend a NestJS y cambiando SQL por MongoDB. Ve a la rama [main](https://github.com/Ale6100/Proyecto-Remiseria.git) si deseas ver la versión actual
+
+A continuación te dejo el README original:
+
+---
 
 Bienvenido! En este proyecto presento una aplicación web simple para gestionar automóviles, choferes y viajes de una remisería utilizando frontend en NextJS y backend en ExpressJS por separado.
 
