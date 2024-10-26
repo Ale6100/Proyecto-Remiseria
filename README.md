@@ -1,4 +1,8 @@
-# Proyecto Remisería
+# Proyecto Remisería (versión antigua)
+
+Nota: En esta rama se encuentra la versión antigua del proyecto donde el backend era con NodeJS y ExpressJS, y el frontend no tenía incorporado TypeScript. A continuación te dejo el README original:
+
+---
 
 Bienvenido! En este proyecto presento una aplicación web simple para gestionar automóviles, choferes y viajes de una remisería utilizando frontend en NextJS y backend en ExpressJS por separado.
 
