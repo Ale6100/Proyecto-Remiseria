@@ -1,6 +1,8 @@
 # Proyecto Remisería (versión antigua)
 
-Nota: En esta rama se encuentra la versión antigua del proyecto donde el backend era con NodeJS y ExpressJS, y el frontend no tenía incorporado TypeScript. A continuación te dejo el README original:
+Nota: En esta rama se encuentra la versión antigua del proyecto donde el backend era con NodeJS y ExpressJS, y el frontend no tenía incorporado TypeScript. Ve a la rama [main](https://github.com/Ale6100/Proyecto-Remiseria.git) si deseas ver la versión actual
+
+A continuación te dejo el README original:
 
 ---
 
